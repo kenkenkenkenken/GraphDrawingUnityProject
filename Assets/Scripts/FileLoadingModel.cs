@@ -5,14 +5,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using Cysharp.Threading.Tasks;
+using UniRx;
+using System.Linq;
 
 public class FileLoadingModel : MonoBehaviour
 {
+    [SerializeField] private DataConversionForGraphModel dataConversionForGraphModel;
+    Subject<List<string[]>> subject = new Subject<List<string[]>>();
+
+    private void Start()
+    {
+        subject.Subscribe(x => dataConversionForGraphModel.SetProcessingData(x));
+    }
+
     /// <summary>
     /// CSVファイルを読み込む
     /// </summary>
     /// <returns>ファイルのデータをリストに格納したもの</returns>
-    public async UniTask<List<string[]>> LoadCsv()
+    public async UniTask LoadCsv()
     {　　
         //CSVファイルを読み込む
         var mDataList = new List<string[]>(); 
@@ -27,22 +37,9 @@ public class FileLoadingModel : MonoBehaviour
             }
         }
 
-        return mDataList;
+        subject.OnNext(mDataList);
     }
-    //for (var i = 1; i < mDataList.Count; i++ )
-    //{
-    //   var lx = AngleUtility.GetAngle(float.Parse(mDataList[i][26]), float.Parse(mDataList[i][24]));
-    //}
 
-    //参考：
-    // 左目（左右）zx
-    //lx = AngleUtility.GetAngle(float.Parse(mDataList[i][26]), float.Parse(mDataList[i][24]));
-    // 左目（上下）zy
-    //ly = AngleUtility.GetAngle(float.Parse(mDataList[i][26]), float.Parse(mDataList[i][25]));
 
 }
-//index
-// 1   Application Time(経過時間 )
-// 24  Eye Ray left dir  x（ 左眼の視線方向 x ）
-// 25  Eye Ray left dir  y（ 左眼の視線方向 y ）
-// 26  Eye Ray left dir  z（ 左眼の視線方向 z ）
+
