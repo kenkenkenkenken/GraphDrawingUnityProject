@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class GraphDrawingPanelView : MonoBehaviour
+public class GraphDrawingSpaceView : MonoBehaviour
 {
     private Material _lineMaterial;
 
@@ -15,12 +16,13 @@ public class GraphDrawingPanelView : MonoBehaviour
 
     private void OnRenderObject()
     {
-
+        DrawBackground();
         DrawHorizontalScaleLine();
         DrawHorizontalScaleCenterLine();
         DrawVerticalScaleLine();
         DrawVerticalScaleCenterLine();
         DrawSeries(timeList, dotList);
+        DrawFrameBorder();
     }
 
     private List<float> timeList = new List<float>();
@@ -46,15 +48,69 @@ public class GraphDrawingPanelView : MonoBehaviour
         }
     }
 
-    private Color _seriesClor = new Color(0f, 163f, 255f, 1f);
 
+    private Color _backgroundClor = new Color(220f, 238f, 253f, 1f);
+    /// <summary>
+    /// 背景を描画する
+    /// </summary>
+    void DrawBackground()
+    {
+        GL.PushMatrix();
+        {
+            _lineMaterial.SetColor("_Color", Color.grey);
+            _lineMaterial.SetPass(0);
+
+            GL.Begin(GL.QUADS);
+            {
+                float lineWidth = 2f;
+                int verticalCenterPosition = 0;
+                GL.Vertex3(0, verticalCenterPosition + lineWidth, 0); ;
+                GL.Vertex3(20, verticalCenterPosition + lineWidth, 0);
+                GL.Vertex3(20, verticalCenterPosition - lineWidth, 0);
+                GL.Vertex3(0, verticalCenterPosition - lineWidth, 0);
+            }
+            GL.End();
+        }
+        GL.PopMatrix();
+    }
+
+    private Color _seriesClor = new Color(0f, 163f, 255f, 1f);
     //系列を描く
+    //void DrawSeries(List<float> timeList, List<float> dotList)
+    //{
+    //     グラフ描画
+    //    GL.PushMatrix();
+    //    {
+    //        _lineMaterial.SetColor("_Color", Color.cyan);
+    //        _lineMaterial.SetPass(0);
+
+    //         データグラフの描画
+    //        GL.Begin(GL.LINE_STRIP);
+    //        {
+    //            for (int i = 0; i < timeList.Count; i++)
+    //            {
+    //                最初の時間を目盛りの0に合わせる //垂直の描画位置を20分の1にする
+    //                GL.Vertex3(timeList[i] - timeList[0], dotList[i] / 20, 0.0f);
+
+    //                グラフの目盛りの20秒を超えたらループを抜ける
+    //                if (timeList[i] >= timeList[0] + 20)
+    //                {
+    //                    break;
+    //                }
+    //            }
+
+    //        }
+    //        GL.End();
+    //    }
+    //    GL.PopMatrix();
+    //}
+
     void DrawSeries(List<float> timeList, List<float> dotList)
     {
         // グラフ描画
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", _seriesClor);
+            _lineMaterial.SetColor("_Color", Color.cyan);
             _lineMaterial.SetPass(0);
 
             // データグラフの描画
@@ -63,7 +119,14 @@ public class GraphDrawingPanelView : MonoBehaviour
                 for (int i = 0; i < timeList.Count; i++)
                 {
                     //最初の時間を目盛りの0に合わせる //垂直の描画位置を20分の1にする
-                    GL.Vertex3(timeList[i] - timeList[0], dotList[i] / 20, 0.0f);
+                    GL.Vertex3
+                        (
+                            (timeList[i] - timeList[0]) + transform.position.x, 
+                            (dotList[i] / 20) + transform.position.y, 
+                            0.0f + transform.position.z
+                        );
+
+                    
 
                     //グラフの目盛りの20秒を超えたらループを抜ける
                     if (timeList[i] >= timeList[0] + 20)
@@ -81,22 +144,29 @@ public class GraphDrawingPanelView : MonoBehaviour
     //横目盛りを描く
     void DrawHorizontalScaleLine()
     {
-        //1ずつ3ライン
-        // グラフ描画
         GL.PushMatrix();
         {
             _lineMaterial.SetColor("_Color", Color.white);
             _lineMaterial.SetPass(0);
 
-            // データグラフの描画
             GL.Begin(GL.LINES);
             {
                 for (var i = -1; i < 2; i++)
                 {
-                    GL.Vertex3(0, i, 0.0f);
-                    GL.Vertex3(20, i, 0.0f);
-                }
+                    GL.Vertex3
+                    (
+                        0 + transform.position.x,
+                        i + transform.position.y,
+                        0.0f + transform.position.z
+                    );
 
+                    GL.Vertex3
+                    (
+                        20 + transform.position.x,
+                        i + transform.position.y,
+                        0.0f + transform.position.z
+                    );
+                }
             }
             GL.End();
         }
@@ -173,7 +243,34 @@ public class GraphDrawingPanelView : MonoBehaviour
             GL.End();
         }
         GL.PopMatrix();
-    }    
+    }
+    
+    void DrawFrameBorder()
+    {
+        GL.PushMatrix();
+        {
+            _lineMaterial.SetColor("_Color", Color.green);
+            _lineMaterial.SetPass(0);
+
+            // データグラフの描画
+            GL.Begin(GL.LINES);
+            {
+                //縦線
+                GL.Vertex3(0, -2, 0.0f);
+                GL.Vertex3(0, 2, 0.0f);
+ 
+
+                //横線
+                for (var i = -2; i <= 2; i += 4)
+                {
+                    GL.Vertex3(0, i, 0.0f);
+                    GL.Vertex3(20, i, 0.0f);
+                }
+            }
+            GL.End();
+        }
+        GL.PopMatrix();
+    }
 }
 
     ////LineRendererでのグラフ出力用
