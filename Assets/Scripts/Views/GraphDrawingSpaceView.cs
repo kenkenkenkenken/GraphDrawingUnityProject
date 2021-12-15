@@ -33,12 +33,13 @@ public class GraphDrawingSpaceView : MonoBehaviour
         this.timeList = timeList;
         this.dotList = dotList;
     }
-
+    /// <summary>
+    /// // GL描画用マテリアル設定
+    /// </summary>
     void CreateLineMaterial()
     {
         if (!_lineMaterial)
         {
-            // GL描画用マテリアル設定
             Shader shader = Shader.Find("Hidden/Internal-Colored");
             _lineMaterial = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
             _lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
@@ -48,10 +49,8 @@ public class GraphDrawingSpaceView : MonoBehaviour
         }
     }
 
-
-    private Color _backgroundClor = new Color(220f, 238f, 253f, 1f);
     /// <summary>
-    /// 背景を描画する
+    /// 背景を描く
     /// </summary>
     void DrawBackground()
     {
@@ -64,69 +63,34 @@ public class GraphDrawingSpaceView : MonoBehaviour
             {
                 float lineWidth = 2f;
                 int verticalCenterPosition = 0;
-                GL.Vertex3(0, verticalCenterPosition + lineWidth, 0); ;
-                GL.Vertex3(20, verticalCenterPosition + lineWidth, 0);
-                GL.Vertex3(20, verticalCenterPosition - lineWidth, 0);
-                GL.Vertex3(0, verticalCenterPosition - lineWidth, 0);
+                FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
+                FollowAndDrawGraph(20, verticalCenterPosition + lineWidth, 0);
+                FollowAndDrawGraph(20, verticalCenterPosition - lineWidth, 0);
+                FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
             }
             GL.End();
         }
         GL.PopMatrix();
     }
-
-    private Color _seriesClor = new Color(0f, 163f, 255f, 1f);
-    //系列を描く
-    //void DrawSeries(List<float> timeList, List<float> dotList)
-    //{
-    //     グラフ描画
-    //    GL.PushMatrix();
-    //    {
-    //        _lineMaterial.SetColor("_Color", Color.cyan);
-    //        _lineMaterial.SetPass(0);
-
-    //         データグラフの描画
-    //        GL.Begin(GL.LINE_STRIP);
-    //        {
-    //            for (int i = 0; i < timeList.Count; i++)
-    //            {
-    //                最初の時間を目盛りの0に合わせる //垂直の描画位置を20分の1にする
-    //                GL.Vertex3(timeList[i] - timeList[0], dotList[i] / 20, 0.0f);
-
-    //                グラフの目盛りの20秒を超えたらループを抜ける
-    //                if (timeList[i] >= timeList[0] + 20)
-    //                {
-    //                    break;
-    //                }
-    //            }
-
-    //        }
-    //        GL.End();
-    //    }
-    //    GL.PopMatrix();
-    //}
-
+ 
+    /// <summary>
+    /// 系列を描く
+    /// </summary>
+    /// <param name="timeList">x軸のデータ</param>
+    /// <param name="dotList">y軸のデータ</param>
     void DrawSeries(List<float> timeList, List<float> dotList)
     {
-        // グラフ描画
         GL.PushMatrix();
         {
             _lineMaterial.SetColor("_Color", Color.cyan);
             _lineMaterial.SetPass(0);
 
-            // データグラフの描画
             GL.Begin(GL.LINE_STRIP);
             {
                 for (int i = 0; i < timeList.Count; i++)
                 {
                     //最初の時間を目盛りの0に合わせる //垂直の描画位置を20分の1にする
-                    GL.Vertex3
-                        (
-                            (timeList[i] - timeList[0]) + transform.position.x, 
-                            (dotList[i] / 20) + transform.position.y, 
-                            0.0f + transform.position.z
-                        );
-
-                    
+                    FollowAndDrawGraph(timeList[i] - timeList[0], dotList[i] / 20, 0.0f);
 
                     //グラフの目盛りの20秒を超えたらループを抜ける
                     if (timeList[i] >= timeList[0] + 20)
@@ -141,7 +105,9 @@ public class GraphDrawingSpaceView : MonoBehaviour
         GL.PopMatrix();
     }
 
-    //横目盛りを描く
+    /// <summary>
+    /// 横目盛りを描く 
+    /// </summary>
     void DrawHorizontalScaleLine()
     {
         GL.PushMatrix();
@@ -153,19 +119,8 @@ public class GraphDrawingSpaceView : MonoBehaviour
             {
                 for (var i = -1; i < 2; i++)
                 {
-                    GL.Vertex3
-                    (
-                        0 + transform.position.x,
-                        i + transform.position.y,
-                        0.0f + transform.position.z
-                    );
-
-                    GL.Vertex3
-                    (
-                        20 + transform.position.x,
-                        i + transform.position.y,
-                        0.0f + transform.position.z
-                    );
+                    FollowAndDrawGraph(0, i, 0);
+                    FollowAndDrawGraph(20, i, 0);
                 }
             }
             GL.End();
@@ -173,7 +128,9 @@ public class GraphDrawingSpaceView : MonoBehaviour
         GL.PopMatrix();
     }
 
-    //縦目盛りを描く
+    /// <summary>
+    /// 縦目盛りを描く 
+    /// </summary>
     void DrawVerticalScaleLine()
     {
         //1ずつ19ライン
@@ -188,8 +145,8 @@ public class GraphDrawingSpaceView : MonoBehaviour
             {
                 for (var i = 1; i < 20; i++)
                 {
-                    GL.Vertex3(i, 2.0f, 0.0f);
-                    GL.Vertex3(i, -2.0f, 0.0f);
+                    FollowAndDrawGraph(i, 2, 0);
+                    FollowAndDrawGraph(i, -2, 0);
                 }
 
             }
@@ -198,9 +155,11 @@ public class GraphDrawingSpaceView : MonoBehaviour
         GL.PopMatrix();
     }
 
+    /// <summary>
+    /// 水平の目盛りの中央の線を太く描く
+    /// </summary>
     void DrawVerticalScaleCenterLine()
     {
-
         GL.PushMatrix();
         {
             _lineMaterial.SetColor("_Color", Color.red);
@@ -211,18 +170,19 @@ public class GraphDrawingSpaceView : MonoBehaviour
             {
                 float lineWidth = 0.015f;
                 int verticalCenterPosition = 10;
-                GL.Vertex3(verticalCenterPosition - lineWidth, 2, 0);
-                GL.Vertex3(verticalCenterPosition + lineWidth, 2, 0);
-                GL.Vertex3(verticalCenterPosition + lineWidth, -2, 0);
-                GL.Vertex3(verticalCenterPosition - lineWidth, -2, 0);
-
-
+                FollowAndDrawGraph(verticalCenterPosition - lineWidth, 2, 0);
+                FollowAndDrawGraph(verticalCenterPosition + lineWidth, 2, 0);
+                FollowAndDrawGraph(verticalCenterPosition + lineWidth, -2, 0);
+                FollowAndDrawGraph(verticalCenterPosition - lineWidth, -2, 0);
             }
             GL.End();
         }
         GL.PopMatrix();
     }
 
+    /// <summary>
+    /// 水平の目盛りの中央の線を太く描く
+    /// </summary>
     void DrawHorizontalScaleCenterLine()
     {
         GL.PushMatrix();
@@ -230,21 +190,23 @@ public class GraphDrawingSpaceView : MonoBehaviour
             _lineMaterial.SetColor("_Color", Color.white);
             _lineMaterial.SetPass(0);
 
-            // データグラフの描画
             GL.Begin(GL.QUADS);
             {
                 float lineWidth = 0.02f;
                 int verticalCenterPosition = 0;
-                GL.Vertex3(0,  verticalCenterPosition + lineWidth, 0);;
-                GL.Vertex3(20, verticalCenterPosition + lineWidth, 0);
-                GL.Vertex3(20, verticalCenterPosition - lineWidth, 0);
-                GL.Vertex3(0,  verticalCenterPosition - lineWidth, 0);
+                FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
+                FollowAndDrawGraph(20, verticalCenterPosition + lineWidth, 0);
+                FollowAndDrawGraph(20, verticalCenterPosition - lineWidth, 0);
+                FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
             }
             GL.End();
         }
         GL.PopMatrix();
     }
     
+    /// <summary>
+    /// 枠線を描く
+    /// </summary>
     void DrawFrameBorder()
     {
         GL.PushMatrix();
@@ -252,33 +214,44 @@ public class GraphDrawingSpaceView : MonoBehaviour
             _lineMaterial.SetColor("_Color", Color.green);
             _lineMaterial.SetPass(0);
 
-            // データグラフの描画
             GL.Begin(GL.LINES);
             {
                 //縦線
-                GL.Vertex3(0, -2, 0.0f);
-                GL.Vertex3(0, 2, 0.0f);
- 
+                FollowAndDrawGraph(0, -2, 0);
+                FollowAndDrawGraph(0, 2, 0);
 
                 //横線
                 for (var i = -2; i <= 2; i += 4)
                 {
-                    GL.Vertex3(0, i, 0.0f);
-                    GL.Vertex3(20, i, 0.0f);
+                    FollowAndDrawGraph(0, i, 0);
+                    FollowAndDrawGraph(20, i, 0);
                 }
             }
             GL.End();
         }
         GL.PopMatrix();
     }
-}
 
+    /// <summary>
+    /// ゲームオブジェクトを追従してグラフを描く
+    /// </summary>
+    /// <param name="x">追従前の描画位置のx座標</param>
+    /// <param name="y">追従前の描画位置のy座標</param>
+    /// <param name="z">追従前の描画位置のz座標</param>
+    void FollowAndDrawGraph(float x, float y, float z)
+    {
+        GL.Vertex3
+        (
+            x + transform.position.x,
+            y + transform.position.y,
+            z + transform.position.z
+        );
+    }
+}
     ////LineRendererでのグラフ出力用
     //[SerializeField] private LineRenderer lineRenderer;
     //public void DrawGraph(List<float> timeList, List<float> dotList)
     //{
-
-
     //    // 点の数を指定する
     //    lineRenderer.positionCount = dotList.Count;
     //    lineRenderer.startWidth = 0.01f;                   // 開始点の太さを0.1にする
