@@ -13,6 +13,8 @@ public class GraphDrawingSpaceView : MonoBehaviour
     {
         CreateLineMaterial();
     }
+    private List<float> timeList = new List<float>();
+    private List<float> angleList = new List<float>();
 
     private void OnRenderObject()
     {
@@ -21,17 +23,21 @@ public class GraphDrawingSpaceView : MonoBehaviour
         DrawHorizontalScaleCenterLine();
         DrawVerticalScaleLine();
         DrawVerticalScaleCenterLine();
-        DrawSeries(timeList, dotList);
+        DrawSeries(timeList, angleList);
         DrawFrameBorder();
     }
 
-    private List<float> timeList = new List<float>();
-    private List<float> dotList = new List<float>();
-    //グラフ出力用データを設定する
-    public void SetGraphData(List<float> timeList, List<float> dotList)
+
+
+    /// <summary>
+    /// グラフ出力用データを設定する
+    /// </summary>
+    /// <param name="timeList"></param>
+    /// <param name="dotList"></param>
+    public void SetGraphData(List<float> timeList, List<float> angleList)
     {
         this.timeList = timeList;
-        this.dotList = dotList;
+        this.angleList = angleList;
     }
     /// <summary>
     /// // GL描画用マテリアル設定
@@ -77,8 +83,8 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// 系列を描く
     /// </summary>
     /// <param name="timeList">x軸のデータ</param>
-    /// <param name="dotList">y軸のデータ</param>
-    void DrawSeries(List<float> timeList, List<float> dotList)
+    /// <param name="angleList">y軸のデータ</param>
+    void DrawSeries(List<float> timeList, List<float> angleList)
     {
         GL.PushMatrix();
         {
@@ -90,7 +96,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
                 for (int i = 0; i < timeList.Count; i++)
                 {
                     //最初の時間を目盛りの0に合わせる //垂直の描画位置を20分の1にする
-                    FollowAndDrawGraph(timeList[i] - timeList[0], dotList[i] / 20, 0.0f);
+                    FollowAndDrawGraph(timeList[i] - timeList[0], angleList[i] / 20, 0.0f);
 
                     //グラフの目盛りの20秒を超えたらループを抜ける
                     if (timeList[i] >= timeList[0] + 20)
