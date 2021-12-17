@@ -28,8 +28,8 @@ public class DataConversionForGraphModel : MonoBehaviour
 
     public ReactiveCollection<List<float>> eyeMovementLeftHorizontalList = new ReactiveCollection<List<float>>();
     public ReactiveCollection<List<float>> eyeMovementLeftVerticalList = new ReactiveCollection<List<float>>();
-    public IObservable<CollectionAddEvent<List<float>>> DrawGraph => eyeMovementLeftHorizontalList.ObserveAdd();
-
+    public IObservable<CollectionAddEvent<List<float>>> ObserveAddEyeMovementLeftHorizontalList => eyeMovementLeftHorizontalList.ObserveAdd();
+    public IObservable<CollectionAddEvent<List<float>>> ObserveAddEyeMovementLeftVerticalList => eyeMovementLeftVerticalList.ObserveAdd();
     void Start()
     {
         //左目（左右）zxの、グラフ出力データを取得する。
@@ -39,14 +39,13 @@ public class DataConversionForGraphModel : MonoBehaviour
             eyeMovementLeftHorizontalList.Add(GetGraphData(_eyeRayLeftDirZList, _eyeRayLeftDirXList));
         });
 
-        
-
-        Debug.Log("start");
-        ////左目（左右）zxの、グラフ出力データを取得する。
-        //subject.Subscribe(_ => eyeMovementLeftHorizontal = GetGraphData(_eyeRayLeftDirZList, _eyeRayLeftDirXList));
 
         ////左目（上下）zyの、グラフ出力データを取得する。
-        //subject.Subscribe(_ => eyeMovementLeftVertical = GetGraphData(_eyeRayLeftDirZList, _eyeRayLeftDirYList));
+        subject.Subscribe(_ =>
+        {
+            eyeMovementLeftVerticalList.Clear();
+            eyeMovementLeftVerticalList.Add(GetGraphData(_eyeRayLeftDirZList, _eyeRayLeftDirYList));
+        });
     }
 
     
@@ -86,7 +85,6 @@ public class DataConversionForGraphModel : MonoBehaviour
         {
             graphDataList.Add(AngleUtility.GetAngle(dataList1[i], dataList2[i]));
         }
-        Debug.Log("GetGraphDat");
         return graphDataList;
     }
 

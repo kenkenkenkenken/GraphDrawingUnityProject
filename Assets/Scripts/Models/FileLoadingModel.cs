@@ -24,7 +24,6 @@ public class FileLoadingModel : MonoBehaviour
     /// <returns>ファイルのデータをリストに格納したもの</returns>
     public async UniTask LoadCsv()
     {
-        Debug.Log("LoadCsv()");
         //CSVファイルを読み込む
         var mDataList = new List<string[]>(); 
         TextAsset csvFile = (TextAsset)await Resources.LoadAsync<TextAsset>("okn_data"); 
