@@ -17,25 +17,29 @@ public class GraphDrawingSpacePresenter : MonoBehaviour
 void Start()
     {
         // model -> view
-        _dataConversionForGraphModel.ObserveAddEyeMovementLeftHorizontalList.Subscribe(_ =>
+        _dataConversionForGraphModel.ObserveAddEyeMovementLeftHorizontalList
+        .Subscribe(_ =>
         {
             _eyeMovementLeftHorizontalGdsv.SetGraphData
             (
-                _dataConversionForGraphModel._applicationTimeList,
+                _dataConversionForGraphModel.applicationTimeList,
                 _dataConversionForGraphModel.eyeMovementLeftHorizontalList.SelectMany(c => c).ToList()
             );
             _eyeMovementLeftHorizontalCanvas.SetActive(true);
-        });
+        })
+        .AddTo(this.gameObject);
 
-        _dataConversionForGraphModel.ObserveAddEyeMovementLeftVerticalList.Subscribe(_ =>
+        _dataConversionForGraphModel.ObserveAddEyeMovementLeftVerticalList
+        .Subscribe(_ =>
         {
             _eyeMovementLeftVerticalGdsv.SetGraphData
             (
-                _dataConversionForGraphModel._applicationTimeList,
+                _dataConversionForGraphModel.applicationTimeList,
                 _dataConversionForGraphModel.eyeMovementLeftVerticalList.SelectMany(c => c).ToList()
             );
             _eyeMovementLeftVerticalCanvas.SetActive(true);
-        });
+        })
+        .AddTo(this.gameObject);
 
     }
 }
