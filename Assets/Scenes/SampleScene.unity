@@ -598,7 +598,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -2.5, y: 0}
   m_SizeDelta: {x: 100, y: 30}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &608449397
@@ -695,7 +695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd39f17d38dc394ab6e6cd7580e205a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  button: {fileID: 608449397}
+  drawingStartButton: {fileID: 608449397}
 --- !u!1 &676729956
 GameObject:
   m_ObjectHideFlags: 0
@@ -1417,7 +1417,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: "\u30B0\u30E9\u30D5\u3092\u63CF\u304F"
 --- !u!222 &1701453463
 CanvasRenderer:
   m_ObjectHideFlags: 0

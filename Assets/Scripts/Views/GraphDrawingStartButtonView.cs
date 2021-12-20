@@ -8,13 +8,12 @@ using UniRx;
 public class GraphDrawingStartButtonView : MonoBehaviour
 {
 
-    [SerializeField] private Button button;
+    [SerializeField] private Button drawingStartButton;
 
-    public IObservable<Unit> StartLoadingTheFile => button.OnClickAsObservable().TakeUntilDestroy(this);
-
+    public IObservable<Unit> StartLoadingTheFile => drawingStartButton.OnClickAsObservable().TakeUntilDestroy(this);
 
     void Start()
     {
-
+        drawingStartButton.OnClickAsObservable().TakeUntilDestroy(this).Subscribe(_ => drawingStartButton.gameObject.SetActive(false));
     }
 }
