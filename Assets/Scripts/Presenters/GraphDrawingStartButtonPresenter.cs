@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using Cysharp.Threading.Tasks;
+using UniRx.Diagnostics;
 
 public class GraphDrawingStartButtonPresenter : MonoBehaviour
 {
@@ -14,11 +16,10 @@ public class GraphDrawingStartButtonPresenter : MonoBehaviour
     {
 
         // view -> model
-        graphDrawingStartButtonView.StartLoadingTheFile.Subscribe(_ => fileLoadingModel.LoadCsv().Forget());
+        graphDrawingStartButtonView.OnClickDrawingStartButton.Subscribe(_ =>fileLoadingModel.LoadCsv().Forget()).AddTo(this.gameObject);
 
-        //// model -> view
+        //// model -> view 
         //testhpmodel.hp.subscribe(testhpview.displayhp);
-
-
+        //graphDrawingStartButtonView.OnClickDrawingStartButton.Subscribe(_ => fileLoadingModel.LoadCsv().Forget());
     }
 }

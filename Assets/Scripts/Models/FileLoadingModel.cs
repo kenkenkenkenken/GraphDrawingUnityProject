@@ -13,9 +13,12 @@ public class FileLoadingModel : MonoBehaviour
     [SerializeField] private DataConversionForGraphModel dataConversionForGraphModel;
     Subject<List<string[]>> subject = new Subject<List<string[]>>();
 
+    public ReactiveCollection<List<string[]>> csvDataList = new ReactiveCollection<List<string[]>>();
+    public IObservable<CollectionAddEvent<List<string[]>>> ObserveAddCsvDataList => csvDataList.ObserveAdd();
+
     private void Start()
     {
-        subject.Subscribe(x => dataConversionForGraphModel.SetProcessingData(x));
+        ObserveAddCsvDataList.Subscribe(_ => dataConversionForGraphModel.SetProcessingData(csvDataList.SelectMany(x => x).ToList())).AddTo(this.gameObject);
     }
 
     /// <summary>
@@ -37,7 +40,7 @@ public class FileLoadingModel : MonoBehaviour
             }
         }
 
-        subject.OnNext(mDataList);
+        csvDataList.Add(mDataList); 
     }
 
 

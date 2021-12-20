@@ -6,19 +6,18 @@ using UnityEngine;
 
 public class DataConversionForGraphModel : MonoBehaviour
 {
-    private enum Graph
+    /// <summary>
+    /// CSVのデータ名と対応する列数目
+    /// </summary>
+    private enum MDataListIndex
     {
-        ApplicationTime = 1,
-        EyeRayLeftDirX = 24,
-        EyeRayLeftDirY = 25,
-        EyeRayLeftDirZ = 26,
+        ApplicationTime = 1, //経過時間
+        EyeRayLeftDirX = 24, //左眼の視線方向 x
+        EyeRayLeftDirY = 25, //左眼の視線方向 y
+        EyeRayLeftDirZ = 26, //左眼の視線方向 z
     }
-    // 1   Application Time(経過時間 )
-    // 24  Eye Ray left dir  x（ 左眼の視線方向 x ）
-    // 25  Eye Ray left dir  y（ 左眼の視線方向 y ）
-    // 26  Eye Ray left dir  z（ 左眼の視線方向 z ）
 
-    public List<float> _applicationTimeList = new List<float>();
+    public List<float> applicationTimeList = new List<float>();
     private List<float> _eyeRayLeftDirXList = new List<float>();
     private List<float> _eyeRayLeftDirYList = new List<float>();
     private List<float> _eyeRayLeftDirZList = new List<float>();
@@ -30,49 +29,44 @@ public class DataConversionForGraphModel : MonoBehaviour
     public ReactiveCollection<List<float>> eyeMovementLeftVerticalList = new ReactiveCollection<List<float>>();
     public IObservable<CollectionAddEvent<List<float>>> ObserveAddEyeMovementLeftHorizontalList => eyeMovementLeftHorizontalList.ObserveAdd();
     public IObservable<CollectionAddEvent<List<float>>> ObserveAddEyeMovementLeftVerticalList => eyeMovementLeftVerticalList.ObserveAdd();
+    
     void Start()
     {
         //左目（左右）zxの、グラフ出力データを取得する。
-        subject.Subscribe(_ =>
+        subject
+        .Subscribe(_ =>
         {
             eyeMovementLeftHorizontalList.Clear();
             eyeMovementLeftHorizontalList.Add(GetGraphData(_eyeRayLeftDirZList, _eyeRayLeftDirXList));
-        });
+        })
+        .AddTo(this.gameObject);
 
 
         ////左目（上下）zyの、グラフ出力データを取得する。
-        subject.Subscribe(_ =>
+        subject
+        .Subscribe(_ =>
         {
             eyeMovementLeftVerticalList.Clear();
             eyeMovementLeftVerticalList.Add(GetGraphData(_eyeRayLeftDirZList, _eyeRayLeftDirYList));
-        });
+        })
+        .AddTo(this.gameObject);
     }
 
-    
-    //public ReactiveCollection<float> GetGraphData(List<float> dataList1, List<float> dataList2)
-    //{
-    //    var graphDataList = new ReactiveCollection<float>();
-    //    for (int i = 1; i < dataList1.Count; i++)
-    //    {
-    //        graphDataList.Add(AngleUtility.GetAngle(dataList1[i], dataList2[i]));
-    //    }
 
-    //    return graphDataList;
-    //}
 
     public void SetProcessingData(List<string[]> mDataList)
     {
-        _applicationTimeList.Clear();
+        applicationTimeList.Clear();
         _eyeRayLeftDirXList.Clear();
         _eyeRayLeftDirYList.Clear();
         _eyeRayLeftDirZList.Clear();
 
         for (int i = 1; i < mDataList.Count; i++)
         {
-            _applicationTimeList.Add(float.Parse(mDataList[i][(int)Graph.ApplicationTime]));
-            _eyeRayLeftDirXList.Add(float.Parse(mDataList[i][(int)Graph.EyeRayLeftDirX]));
-            _eyeRayLeftDirYList.Add(float.Parse(mDataList[i][(int)Graph.EyeRayLeftDirY]));
-            _eyeRayLeftDirZList.Add(float.Parse(mDataList[i][(int)Graph.EyeRayLeftDirZ]));
+            applicationTimeList.Add(float.Parse(mDataList[i][(int)MDataListIndex.ApplicationTime]));
+            _eyeRayLeftDirXList.Add(float.Parse(mDataList[i][(int)MDataListIndex.EyeRayLeftDirX]));
+            _eyeRayLeftDirYList.Add(float.Parse(mDataList[i][(int)MDataListIndex.EyeRayLeftDirY]));
+            _eyeRayLeftDirZList.Add(float.Parse(mDataList[i][(int)MDataListIndex.EyeRayLeftDirZ]));
         }
         subject.OnNext(Unit.Default);
 
@@ -87,25 +81,4 @@ public class DataConversionForGraphModel : MonoBehaviour
         }
         return graphDataList;
     }
-
-    public void Test()
-    {
-
-    }
 }
-//for (var i = 1; i < mDataList.Count; i++ )
-//{
-//   var lx = AngleUtility.GetAngle(float.Parse(mDataList[i][26]), float.Parse(mDataList[i][24]));
-//}
-
-//参考：
-// 左目（左右）zx
-//lx = AngleUtility.GetAngle(float.Parse(mDataList[i][26]), float.Parse(mDataList[i][24]));
-// 左目（上下）zy
-//ly = AngleUtility.GetAngle(float.Parse(mDataList[i][26]), float.Parse(mDataList[i][25]));
-
-//index
-// 1   Application Time(経過時間 )
-// 24  Eye Ray left dir  x（ 左眼の視線方向 x ）
-// 25  Eye Ray left dir  y（ 左眼の視線方向 y ）
-// 26  Eye Ray left dir  z（ 左眼の視線方向 z ）
