@@ -22,8 +22,8 @@ void Start()
         {
             _eyeMovementLeftHorizontalGdsv.SetGraphData
             (
-                _dataConversionForGraphModel.applicationTimeList,
-                _dataConversionForGraphModel.eyeMovementLeftHorizontalList.SelectMany(c => c).ToList()
+                _dataConversionForGraphModel.ApplicationTimeList.ToList(),
+                _dataConversionForGraphModel.EyeMovementLeftHorizontalList.SelectMany(c => c).ToList()
             );
             _eyeMovementLeftHorizontalCanvas.SetActive(true);
         })
@@ -34,7 +34,7 @@ void Start()
         {
             _eyeMovementLeftVerticalGdsv.SetGraphData
             (
-                _dataConversionForGraphModel.applicationTimeList,
+                _dataConversionForGraphModel.ApplicationTimeList.ToList(),
                 _dataConversionForGraphModel.eyeMovementLeftVerticalList.SelectMany(c => c).ToList()
             );
             _eyeMovementLeftVerticalCanvas.SetActive(true);

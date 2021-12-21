@@ -1,18 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 
 public class GraphDrawingStartButtonView : MonoBehaviour
 {
-    [SerializeField] private Button drawingStartButton;
+    [SerializeField] private Button _drawingStartButton;
 
-    public IObservable<Unit> OnClickDrawingStartButton => drawingStartButton.OnClickAsObservable();
+    /// <summary>
+    /// DrawingStartButtonを押した時に発火するストリーム
+    /// </summary>
+    public IObservable<Unit> OnClickDrawingStartButton => _drawingStartButton.OnClickAsObservable();
 
-    void Start()
+    private void Start()
     {
-        OnClickDrawingStartButton.Subscribe(_ => drawingStartButton.gameObject.SetActive(false)).AddTo(this.gameObject);
+        OnClickDrawingStartButton
+            //ボタンを非表示にする。
+            .Subscribe(_ => _drawingStartButton.gameObject.SetActive(false)).AddTo(this.gameObject);
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +11,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
 {
     private Material _lineMaterial;
 
-    void Start()
+    private void Start()
     {
         CreateLineMaterial();
     }
@@ -27,8 +29,6 @@ public class GraphDrawingSpaceView : MonoBehaviour
         DrawFrameBorder();
     }
 
-
-
     /// <summary>
     /// グラフ出力用データを設定する
     /// </summary>
@@ -39,6 +39,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
         this.timeList = timeList;
         this.angleList = angleList;
     }
+
     /// <summary>
     /// // GL描画用マテリアル設定
     /// </summary>

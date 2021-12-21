@@ -7,42 +7,30 @@ using System.IO;
 using Cysharp.Threading.Tasks;
 using UniRx;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 public class FileLoadingModel : MonoBehaviour
 {
-    [SerializeField] private DataConversionForGraphModel dataConversionForGraphModel;
-    Subject<List<string[]>> subject = new Subject<List<string[]>>();
+    private List<string[]> csvDataList = new List<string[]>();
 
-    public ReactiveCollection<List<string[]>> csvDataList = new ReactiveCollection<List<string[]>>();
-    public IObservable<CollectionAddEvent<List<string[]>>> ObserveAddCsvDataList => csvDataList.ObserveAdd();
-
-    private void Start()
-    {
-        ObserveAddCsvDataList.Subscribe(_ => dataConversionForGraphModel.SetProcessingData(csvDataList.SelectMany(x => x).ToList())).AddTo(this.gameObject);
-    }
+    public ReadOnlyCollection<string[]> CsvDataList => new ReadOnlyCollection<string[]>(csvDataList);
 
     /// <summary>
-    /// CSVファイルを読み込む
+    /// CSVファイルを読みリストに格納する。
     /// </summary>
-    /// <returns>ファイルのデータをリストに格納したもの</returns>
     public async UniTask LoadCsv()
     {
         //CSVファイルを読み込む
-        var mDataList = new List<string[]>(); 
-        TextAsset csvFile = (TextAsset)await Resources.LoadAsync<TextAsset>("okn_data"); 
+        TextAsset csvFile = (TextAsset)await Resources.LoadAsync<TextAsset>("okn_data");
+        
         //ファイルのデータをリストに格納する
-        using (StringReader reader = new StringReader(csvFile.text))
+        using (var reader = new StringReader(csvFile.text))
         {
             string line;
             while ((line = await reader.ReadLineAsync()) != null )
             {
-                mDataList.Add(line.Split(',')); 
+                csvDataList.Add(line.Split(',')); 
             }
         }
-
-        csvDataList.Add(mDataList); 
     }
-
-
 }
-
