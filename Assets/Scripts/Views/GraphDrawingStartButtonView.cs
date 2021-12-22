@@ -14,8 +14,7 @@ public class GraphDrawingStartButtonView : MonoBehaviour
 
     private void Start()
     {
-        OnClickDrawingStartButton
-            //ボタンを非表示にする。
-            .Subscribe(_ => _drawingStartButton.gameObject.SetActive(false)).AddTo(this.gameObject);
+        //DrawingStartButtonを押した時に実行する //DrawingStartButtonボタンを非表示にする
+        OnClickDrawingStartButton.Subscribe(_ => _drawingStartButton.gameObject.SetActive(false)).AddTo(this.gameObject);
     }
 }

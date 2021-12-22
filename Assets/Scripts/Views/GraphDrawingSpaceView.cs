@@ -9,14 +9,43 @@ using UnityEngine.UI;
 
 public class GraphDrawingSpaceView : MonoBehaviour
 {
-    private Material _lineMaterial;
+    /// <summary>
+    /// GL描画用マテリアル
+    /// </summary>
+    [SerializeField] private Material _lineMaterial;
+
+    /// <summary>
+    /// 経過時間のリスト
+    /// </summary>
+    [SerializeField] private List<float> _applicationTimeList = new List<float>();
+
+    /// <summary>
+    /// 経過時間のリストのプロパティ
+    /// </summary>
+    public List<float> ApplicationTimeList
+    {
+        get { return _applicationTimeList; }
+        set { _applicationTimeList = value; }
+    }
+
+    /// <summary>
+    /// 角度のリスト
+    /// </summary>
+    [SerializeField] private List<float> _angleList = new List<float>();
+
+    /// <summary>
+    /// 角度のリストのプロパティ
+    /// </summary>
+    public List<float> AngleList
+    {
+        get { return _angleList; }
+        set { _angleList = value; }
+    }
 
     private void Start()
     {
         CreateLineMaterial();
     }
-    private List<float> timeList = new List<float>();
-    private List<float> angleList = new List<float>();
 
     private void OnRenderObject()
     {
@@ -25,25 +54,14 @@ public class GraphDrawingSpaceView : MonoBehaviour
         DrawHorizontalScaleCenterLine();
         DrawVerticalScaleLine();
         DrawVerticalScaleCenterLine();
-        DrawSeries(timeList, angleList);
+        DrawSeries(_applicationTimeList, _angleList);
         DrawFrameBorder();
     }
 
     /// <summary>
-    /// グラフ出力用データを設定する
+    /// // GL描画用マテリアルを設定する
     /// </summary>
-    /// <param name="timeList"></param>
-    /// <param name="dotList"></param>
-    public void SetGraphData(List<float> timeList, List<float> angleList)
-    {
-        this.timeList = timeList;
-        this.angleList = angleList;
-    }
-
-    /// <summary>
-    /// // GL描画用マテリアル設定
-    /// </summary>
-    void CreateLineMaterial()
+    private void CreateLineMaterial()
     {
         if (!_lineMaterial)
         {
@@ -59,7 +77,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// 背景を描く
     /// </summary>
-    void DrawBackground()
+    private void DrawBackground()
     {
         GL.PushMatrix();
         {
@@ -68,24 +86,26 @@ public class GraphDrawingSpaceView : MonoBehaviour
 
             GL.Begin(GL.QUADS);
             {
-                float lineWidth = 2f;
-                int verticalCenterPosition = 0;
+                float lineWidth = 2;
+                float verticalCenterPosition = 0;
+                float graphWidth = 20;
+
                 FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(20, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(20, verticalCenterPosition - lineWidth, 0);
+                FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
+                FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
                 FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
             }
             GL.End();
         }
         GL.PopMatrix();
     }
- 
+
     /// <summary>
     /// 系列を描く
     /// </summary>
-    /// <param name="timeList">x軸のデータ</param>
-    /// <param name="angleList">y軸のデータ</param>
-    void DrawSeries(List<float> timeList, List<float> angleList)
+    /// <param name="applicationTimeList">経過時間のリスト</param>
+    /// <param name="angleList">角度のリスト</param>
+    private void DrawSeries(List<float> applicationTimeList, List<float> angleList)
     {
         GL.PushMatrix();
         {
@@ -94,18 +114,17 @@ public class GraphDrawingSpaceView : MonoBehaviour
 
             GL.Begin(GL.LINE_STRIP);
             {
-                for (int i = 0; i < timeList.Count; i++)
+                for (int i = 0; i < applicationTimeList.Count; i++)
                 {
-                    //最初の時間を目盛りの0に合わせる //垂直の描画位置を20分の1にする
-                    FollowAndDrawGraph(timeList[i] - timeList[0], angleList[i] / 20, 0.0f);
+                                    //最初の時間を目盛りの0に合わせる                 //垂直の描画位置を20分の1にする
+                    FollowAndDrawGraph(applicationTimeList[i] - applicationTimeList[0], angleList[i] / 20, 0);
 
                     //グラフの目盛りの20秒を超えたらループを抜ける
-                    if (timeList[i] >= timeList[0] + 20)
+                    if (applicationTimeList[i] >= applicationTimeList[0] + 20)
                     {
                         break;
                     }
                 }
-
             }
             GL.End();
         }
@@ -115,7 +134,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// 横目盛りを描く 
     /// </summary>
-    void DrawHorizontalScaleLine()
+    private void DrawHorizontalScaleLine()
     {
         GL.PushMatrix();
         {
@@ -124,10 +143,11 @@ public class GraphDrawingSpaceView : MonoBehaviour
 
             GL.Begin(GL.LINES);
             {
+                float graphWidth = 20;
                 for (var i = -1; i < 2; i++)
                 {
                     FollowAndDrawGraph(0, i, 0);
-                    FollowAndDrawGraph(20, i, 0);
+                    FollowAndDrawGraph(graphWidth, i, 0);
                 }
             }
             GL.End();
@@ -138,16 +158,13 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// 縦目盛りを描く 
     /// </summary>
-    void DrawVerticalScaleLine()
+    private void DrawVerticalScaleLine()
     {
-        //1ずつ19ライン
-        // グラフ描画
         GL.PushMatrix();
         {
             _lineMaterial.SetColor("_Color", Color.white);
             _lineMaterial.SetPass(0);
 
-            // データグラフの描画
             GL.Begin(GL.LINES);
             {
                 for (var i = 1; i < 20; i++)
@@ -165,7 +182,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// 水平の目盛りの中央の線を太く描く
     /// </summary>
-    void DrawVerticalScaleCenterLine()
+    private void DrawVerticalScaleCenterLine()
     {
         GL.PushMatrix();
         {
@@ -176,7 +193,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
             GL.Begin(GL.QUADS);
             {
                 float lineWidth = 0.015f;
-                int verticalCenterPosition = 10;
+                float verticalCenterPosition = 10;
                 FollowAndDrawGraph(verticalCenterPosition - lineWidth, 2, 0);
                 FollowAndDrawGraph(verticalCenterPosition + lineWidth, 2, 0);
                 FollowAndDrawGraph(verticalCenterPosition + lineWidth, -2, 0);
@@ -190,7 +207,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// 水平の目盛りの中央の線を太く描く
     /// </summary>
-    void DrawHorizontalScaleCenterLine()
+    private void DrawHorizontalScaleCenterLine()
     {
         GL.PushMatrix();
         {
@@ -200,21 +217,22 @@ public class GraphDrawingSpaceView : MonoBehaviour
             GL.Begin(GL.QUADS);
             {
                 float lineWidth = 0.02f;
-                int verticalCenterPosition = 0;
+                float verticalCenterPosition = 0;
+                float graphWidth = 20;
                 FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(20, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(20, verticalCenterPosition - lineWidth, 0);
+                FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
+                FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
                 FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
             }
             GL.End();
         }
         GL.PopMatrix();
     }
-    
+
     /// <summary>
     /// 枠線を描く
     /// </summary>
-    void DrawFrameBorder()
+    private void DrawFrameBorder()
     {
         GL.PushMatrix();
         {
@@ -227,11 +245,13 @@ public class GraphDrawingSpaceView : MonoBehaviour
                 FollowAndDrawGraph(0, -2, 0);
                 FollowAndDrawGraph(0, 2, 0);
 
+                float graphWidth = 20;
+
                 //横線
                 for (var i = -2; i <= 2; i += 4)
                 {
                     FollowAndDrawGraph(0, i, 0);
-                    FollowAndDrawGraph(20, i, 0);
+                    FollowAndDrawGraph(graphWidth, i, 0);
                 }
             }
             GL.End();
@@ -245,7 +265,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <param name="x">追従前の描画位置のx座標</param>
     /// <param name="y">追従前の描画位置のy座標</param>
     /// <param name="z">追従前の描画位置のz座標</param>
-    void FollowAndDrawGraph(float x, float y, float z)
+    private void FollowAndDrawGraph(float x, float y, float z)
     {
         GL.Vertex3
         (

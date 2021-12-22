@@ -12,30 +12,16 @@ public class GraphDrawingStartButtonPresenter : MonoBehaviour
     private void Start()
     {
         // view -> model
-        _graphDrawingStartButtonView.OnClickDrawingStartButton
-            .Subscribe(async _ =>
-            {
-                await _fileLoadingModel.LoadCsv();
-                _dataConversionForGraphModel.DivideCsvDataByColumn(_fileLoadingModel.CsvDataList);
 
-                //左眼の水平運動のリストを空にする。
-                _dataConversionForGraphModel.EyeMovementLeftHorizontalList.Clear();
+        //DrawingStartButtonを押した時に実行する
+        _graphDrawingStartButtonView.OnClickDrawingStartButton.Subscribe(async _ =>
+        {   
+            //CSVファイルを読み込む
+            await _fileLoadingModel.LoadCsv();
 
-                //左眼の水平運動のリストに追加する。
-                _dataConversionForGraphModel.EyeMovementLeftHorizontalList.Add(
-                    //左目（左右）zxの、グラフ出力データを取得する。
-                    _dataConversionForGraphModel.GetGraphData(_dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirXList.ToList()));
-
-                //左眼の垂直運動のリストを空にする。
-                _dataConversionForGraphModel.eyeMovementLeftVerticalList.Clear();
-
-                //左眼の垂直運動のリストに追加する。
-                _dataConversionForGraphModel.eyeMovementLeftVerticalList.Add(
-                    //左目（上下）zyの、グラフ出力データを取得する。
-                    _dataConversionForGraphModel.GetGraphData(_dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirYList.ToList()));
-            })
-            .AddTo(this.gameObject);
-
-        // model -> view 
+            //CSVの各列を各リストに追加する。
+            _dataConversionForGraphModel.SetDataForCsvColumn(_fileLoadingModel.CsvDataList.ToList());
+        })
+        .AddTo(this.gameObject);
     }
 }
