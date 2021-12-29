@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class DataConversionForGraphModel : MonoBehaviour
 {
+    #region Field
     /// <summary>
     /// CSVのデータ名と対応する列数目
     /// </summary>
@@ -60,12 +61,13 @@ public class DataConversionForGraphModel : MonoBehaviour
     /// <summary>
     /// SetCsvDataForEachColumn終了時に発火するストリーム
     /// </summary>
-    [SerializeField]  private Subject<Unit> _onSetCsvDataForEachColumn = new Subject<Unit>();
+    private Subject<Unit> _onSetCsvDataForEachColumn = new Subject<Unit>();
 
     /// <summary>
     /// SetCsvDataForEachColumn終了時に発火するストリームのプロパティ
     /// </summary>
     public IObservable<Unit> OnSetCsvDataForEachColumn => _onSetCsvDataForEachColumn;
+    #endregion
 
     /// <summary>
     /// CSVの列のデータを追加する

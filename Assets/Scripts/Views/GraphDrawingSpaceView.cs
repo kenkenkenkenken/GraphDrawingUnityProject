@@ -15,6 +15,15 @@ public class GraphDrawingSpaceView : MonoBehaviour
     [SerializeField] private Material _lineMaterial;
 
     /// <summary>
+    /// GL描画用マテリアルのプロパティ
+    /// </summary>
+    public Material LineMaterial
+    {
+        get { return _lineMaterial; }
+        set { _lineMaterial = value; }
+    }
+
+    /// <summary>
     /// 経過時間のリスト
     /// </summary>
     [SerializeField] private List<float> _applicationTimeList = new List<float>();
@@ -42,11 +51,6 @@ public class GraphDrawingSpaceView : MonoBehaviour
         set { _angleList = value; }
     }
 
-    private void Start()
-    {
-        CreateLineMaterial();
-    }
-
     private void OnRenderObject()
     {
         DrawBackground();
@@ -61,7 +65,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// // GL描画用マテリアルを設定する
     /// </summary>
-    private void CreateLineMaterial()
+    public void CreateLineMaterial()
     {
         if (!_lineMaterial)
         {

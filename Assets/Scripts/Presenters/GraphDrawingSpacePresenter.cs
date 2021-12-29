@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class GraphDrawingSpacePresenter : MonoBehaviour
 {
+
     [SerializeField] private GraphDrawingSpaceView _eyeMovementLeftHorizontalGdsv;
     [SerializeField] private GraphDrawingSpaceView _eyeMovementLeftVerticalGdsv;
     [SerializeField] private DataConversionForGraphModel _dataConversionForGraphModel;
@@ -21,25 +22,34 @@ public class GraphDrawingSpacePresenter : MonoBehaviour
         //SetCsvDataForEachColumn終了時に実行する
         _dataConversionForGraphModel.OnSetCsvDataForEachColumn.Subscribe(_ =>
         {
-            //左眼の水平運動のグラフViewに、経過時間のリストを追加する。
-            _eyeMovementLeftHorizontalGdsv.ApplicationTimeList = _dataConversionForGraphModel.ApplicationTimeList.ToList();
-
-            //左眼の水平運動のグラフViewに、左眼の水平運動のリストを追加する        //左目（左右）zxのリストを渡して、左眼の水平運動のリスト取得する
-            _eyeMovementLeftHorizontalGdsv.AngleList = _dataConversionForGraphModel.GetAngleList(_dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirXList.ToList());
-
-            //ゲームオブジェクトをアクティブにする事で、OnRenderObject()が実行され、グラフが描画される。
-            _eyeMovementLeftHorizontalCanvas.SetActive(true);
-
-
-            //左眼の垂直運動のグラフViewに、経過時間のリストを追加する。
-            _eyeMovementLeftVerticalGdsv.ApplicationTimeList = _dataConversionForGraphModel.ApplicationTimeList.ToList();
-
-            //左眼の垂直運動のグラフViewに、左眼の垂直運動のリストを追加する      //左目（上下）zyのデータを渡して、左眼の垂直運動のリストを取得する。
-            _eyeMovementLeftVerticalGdsv.AngleList = _dataConversionForGraphModel.GetAngleList(_dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirYList.ToList());
-
-            //ゲームオブジェクトをアクティブにする事で、OnRenderObject()が実行され、グラフが描画される。
-            _eyeMovementLeftVerticalCanvas.SetActive(true);
+            //左眼の水平運動のグラフ描画
+            DrawGraph(_eyeMovementLeftHorizontalGdsv, _dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirXList.ToList(), _eyeMovementLeftHorizontalCanvas);
+            
+            //左眼の垂直運動のグラフ描画
+            DrawGraph(_eyeMovementLeftVerticalGdsv, _dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirYList.ToList(), _eyeMovementLeftVerticalCanvas);
         })
         .AddTo(this.gameObject);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="graphView">グラフ描画のView</param>
+    /// <param name="coordinateList1">座標</param>
+    /// <param name="coordinateList2">座標</param>
+    /// <param name="canvas">グラフ描画のゲームオブジェクト</param>
+    void DrawGraph(GraphDrawingSpaceView graphView, List<float> coordinateList1, List<float> coordinateList2, GameObject canvas)
+    {
+        //グラフViewに、経過時間のリストを追加する。
+        graphView.ApplicationTimeList = _dataConversionForGraphModel.ApplicationTimeList.ToList();
+
+        //グラフViewに、角度のリストを追加する        //座標のリストを2つ渡して、角度のリストを取得する
+        graphView.AngleList = _dataConversionForGraphModel.GetAngleList(coordinateList1, coordinateList2);
+
+        //グラフViewの、GL描画用マテリアルを設定する
+        graphView.CreateLineMaterial();
+
+        //ゲームオブジェクトをアクティブにする事で、OnRenderObject()が実行され、グラフが描画される。
+        canvas.SetActive(true);
     }
 }
