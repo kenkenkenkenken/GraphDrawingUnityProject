@@ -1095,6 +1095,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cf05bc572585ea43b76931347a1a950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _applicationTimeList: []
+  _angleList: []
 --- !u!1 &1100595178
 GameObject:
   m_ObjectHideFlags: 0
@@ -1227,6 +1229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cf05bc572585ea43b76931347a1a950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _applicationTimeList: []
+  _angleList: []
 --- !u!1 &1633778108
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,7 +1350,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82dd2aa4116c2394787cf6bd8a18db87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  applicationTimeList: []
+  _applicationTimeList: []
+  _eyeRayLeftDirXList: []
+  _eyeRayLeftDirYList: []
+  _eyeRayLeftDirZList: []
 --- !u!1 &1701453460
 GameObject:
   m_ObjectHideFlags: 0
