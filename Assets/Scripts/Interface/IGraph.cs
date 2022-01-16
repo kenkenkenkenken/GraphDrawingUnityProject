@@ -22,6 +22,11 @@ public interface IGraph
     public List<float> AngleList { get; set; }
 
     /// <summary>
+    /// グラフ描画クラスのインターフェイス
+    /// </summary>
+    public IGraph IGraph { get; set; }
+
+    /// <summary>
     /// カメラがシーンをレンダリングされた後に呼び出される
     /// </summary>
     public void OnRenderObject();

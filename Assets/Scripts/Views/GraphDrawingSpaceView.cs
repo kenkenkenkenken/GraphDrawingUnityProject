@@ -1,17 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using UniRx;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GraphDrawingSpaceView : MonoBehaviour, IGraph
 {
-
-
-
     /// <summary>
     /// GL描画用マテリアル
     /// </summary>
@@ -57,13 +48,23 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
     /// <summary>
     /// グラフ描画クラスのインターフェイス
     /// </summary>
-    private IGraph iGraph;
+    private IGraph _iGraph;
+
+    /// <summary>
+    /// グラフ描画クラスのインターフェイスのプロパティ
+    /// </summary>
+    public IGraph IGraph
+    {
+        get { return _iGraph; }
+        set { _iGraph = value; }
+    }
 
     private void Awake()
     {
         //明示的に実装したインターフェイスメソッドを、クラス内から呼び出す事ができないので、呼び出せるように変数に代入する
-        iGraph = (IGraph)gameObject.GetComponent<GraphDrawingSpaceView>();
+        IGraph = (IGraph)gameObject.GetComponent<GraphDrawingSpaceView>();
     }
+
     /// <summary>
     /// カメラがシーンをレンダリングされた後に呼び出される
     /// </summary>
@@ -73,13 +74,13 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
     /// 
     public void OnRenderObject()
     {
-        iGraph.DrawBackground();
-        iGraph.DrawHorizontalScaleLine();
-        iGraph.DrawHorizontalScaleCenterLine();
-        iGraph.DrawVerticalScaleLine();
-        iGraph.DrawVerticalScaleCenterLine();
-        iGraph.DrawSeries(_applicationTimeList, _angleList);
-        iGraph.DrawFrameBorder();
+        IGraph.DrawBackground();
+        IGraph.DrawHorizontalScaleLine();
+        IGraph.DrawHorizontalScaleCenterLine();
+        IGraph.DrawVerticalScaleLine();
+        IGraph.DrawVerticalScaleCenterLine();
+        IGraph.DrawSeries(_applicationTimeList, _angleList);
+        IGraph.DrawFrameBorder();
     }
 
     /// <summary>
@@ -114,10 +115,10 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
                 float verticalCenterPosition = 0;
                 float graphWidth = 20;
 
-                iGraph.FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
-                iGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
-                iGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
-                iGraph.FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
+                IGraph.FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
+                IGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
+                IGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
+                IGraph.FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
             }
             GL.End();
         }
@@ -141,7 +142,7 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
                 for (int i = 0; i < applicationTimeList.Count; i++)
                 {
                     //最初の時間を目盛りの0に合わせる                 //垂直の描画位置を20分の1にする
-                    iGraph.FollowAndDrawGraph(applicationTimeList[i] - applicationTimeList[0], angleList[i] / 20, 0);
+                    IGraph.FollowAndDrawGraph(applicationTimeList[i] - applicationTimeList[0], angleList[i] / 20, 0);
 
                     //グラフの目盛りの20秒を超えたらループを抜ける
                     if (applicationTimeList[i] >= applicationTimeList[0] + 20)
@@ -170,8 +171,8 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
                 float graphWidth = 20;
                 for (var i = -1; i < 2; i++)
                 {
-                    iGraph.FollowAndDrawGraph(0, i, 0);
-                    iGraph.FollowAndDrawGraph(graphWidth, i, 0);
+                    IGraph.FollowAndDrawGraph(0, i, 0);
+                    IGraph.FollowAndDrawGraph(graphWidth, i, 0);
                 }
             }
             GL.End();
@@ -193,8 +194,8 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
             {
                 for (var i = 1; i < 20; i++)
                 {
-                    iGraph.FollowAndDrawGraph(i, 2, 0);
-                    iGraph.FollowAndDrawGraph(i, -2, 0);
+                    IGraph.FollowAndDrawGraph(i, 2, 0);
+                    IGraph.FollowAndDrawGraph(i, -2, 0);
                 }
 
             }
@@ -218,10 +219,10 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
             {
                 float lineWidth = 0.015f;
                 float verticalCenterPosition = 10;
-                iGraph.FollowAndDrawGraph(verticalCenterPosition - lineWidth, 2, 0);
-                iGraph.FollowAndDrawGraph(verticalCenterPosition + lineWidth, 2, 0);
-                iGraph.FollowAndDrawGraph(verticalCenterPosition + lineWidth, -2, 0);
-                iGraph.FollowAndDrawGraph(verticalCenterPosition - lineWidth, -2, 0);
+                IGraph.FollowAndDrawGraph(verticalCenterPosition - lineWidth, 2, 0);
+                IGraph.FollowAndDrawGraph(verticalCenterPosition + lineWidth, 2, 0);
+                IGraph.FollowAndDrawGraph(verticalCenterPosition + lineWidth, -2, 0);
+                IGraph.FollowAndDrawGraph(verticalCenterPosition - lineWidth, -2, 0);
             }
             GL.End();
         }
@@ -243,10 +244,10 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
                 float lineWidth = 0.02f;
                 float verticalCenterPosition = 0;
                 float graphWidth = 20;
-                iGraph.FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
-                iGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
-                iGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
-                iGraph.FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
+                IGraph.FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
+                IGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
+                IGraph.FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
+                IGraph.FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
             }
             GL.End();
         }
@@ -266,16 +267,16 @@ public class GraphDrawingSpaceView : MonoBehaviour, IGraph
             GL.Begin(GL.LINES);
             {
                 //縦線
-                iGraph.FollowAndDrawGraph(0, -2, 0);
-                iGraph.FollowAndDrawGraph(0, 2, 0);
+                IGraph.FollowAndDrawGraph(0, -2, 0);
+                IGraph.FollowAndDrawGraph(0, 2, 0);
 
                 float graphWidth = 20;
 
                 //横線
                 for (var i = -2; i <= 2; i += 4)
                 {
-                    iGraph.FollowAndDrawGraph(0, i, 0);
-                    iGraph.FollowAndDrawGraph(graphWidth, i, 0);
+                    IGraph.FollowAndDrawGraph(0, i, 0);
+                    IGraph.FollowAndDrawGraph(graphWidth, i, 0);
                 }
             }
             GL.End();
