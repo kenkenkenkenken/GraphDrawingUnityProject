@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 
-public class GraphDrawingStartButtonView : MonoBehaviour
+public class GraphDrawingStartButtonView:MonoBehaviour
 {
     [SerializeField] private Button _drawingStartButton;
 

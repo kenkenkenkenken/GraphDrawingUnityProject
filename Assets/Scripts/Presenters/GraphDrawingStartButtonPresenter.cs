@@ -2,12 +2,25 @@ using Cysharp.Threading.Tasks;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 public class GraphDrawingStartButtonPresenter : MonoBehaviour
 {
     [SerializeField] private GraphDrawingStartButtonView _graphDrawingStartButtonView;
-    [SerializeField] private FileLoadingModel _fileLoadingModel;
+    [SerializeField] private IFileLoadingModel _fileLoadingModel;
     [SerializeField] private DataConversionForGraphModel _dataConversionForGraphModel;
+
+    [Inject]
+    private void Construct( 
+        //GraphDrawingStartButtonView graphDrawingStartButtonView,
+        IFileLoadingModel fileLoadingModel
+        //DataConversionForGraphModel dataConversionForGraphModel
+    )
+    {
+        //_graphDrawingStartButtonView = graphDrawingStartButtonView;
+        _fileLoadingModel = fileLoadingModel;
+        //_dataConversionForGraphModel = dataConversionForGraphModel;
+    }
 
     private void Start()
     {
