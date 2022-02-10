@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 public interface IFileLoadingModel
 {
-    UniTask LoadCsv();
+    public UniTask LoadCsv();
 
-    ReadOnlyCollection<string[]> CsvDataList { get; }
+    public ReadOnlyCollection<string[]> CsvDataList { get; }
 }

@@ -6,13 +6,14 @@ using UniRx;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
-public class GraphDrawingSpacePresenter : MonoBehaviour
+public class GraphDrawingSpacePresenter : IInitializable
 {
     /// <summary>
     /// 左眼の水平運動のグラフ描画のView
     /// </summary>
-    [SerializeField] private GraphDrawingSpaceView _eyeMovementLeftHorizontalGdsv;
+    private IGraph _eyeMovementLeftHorizontal;
 
     /// <summary>
     /// 左眼の水平運動のグラフ描画のViewのプロパティ
@@ -22,13 +23,13 @@ public class GraphDrawingSpacePresenter : MonoBehaviour
     ///</remarks>
     public IGraph IgraphEyeMovementLeftHorizontal
     {
-        get { return (IGraph)_eyeMovementLeftHorizontalGdsv; }
+        get { return _eyeMovementLeftHorizontal; }
     }
 
     /// <summary>
     /// 左眼の垂直運動のグラフ描画のView
     /// </summary>
-    [SerializeField] private GraphDrawingSpaceView _eyeMovementLeftVerticalGdsv;
+    private IGraph _eyeMovementLeftVertical;
 
     /// <summary>
     /// 左眼の垂直運動のグラフ描画のViewのプロパティ
@@ -38,16 +39,35 @@ public class GraphDrawingSpacePresenter : MonoBehaviour
     ///</remarks>
     public IGraph IgraphEyeMovementLeftVertical
     {
-        get { return (IGraph)_eyeMovementLeftVerticalGdsv; }
+        get { return _eyeMovementLeftVertical; }
     }
 
-    [SerializeField] private DataConversionForGraphModel _dataConversionForGraphModel;
-    [SerializeField] private GameObject _eyeMovementLeftHorizontalCanvas;
-    [SerializeField] private GameObject _eyeMovementLeftVerticalCanvas;
+    [SerializeField] private IDataConversionForGraphModel _dataConversionForGraphModel;
+    [SerializeField] private RectTransform _eyeMovementLeftHorizontalCanvas;
+    [SerializeField] private RectTransform _eyeMovementLeftVerticalCanvas;
 
+    public GraphDrawingSpacePresenter(
+        [Inject(Id = "EyeMovementLeftHorizontalCanvas")]
+        RectTransform eyeMovementLeftHorizontalCanvas,
+        [Inject(Id = "EyeMovementLeftVerticalCanvas")]
+        RectTransform eyeMovementLeftVerticalCanvas,
 
+        [Inject(Id = "EyeMovementLeftHorizontal")]
+        IGraph eyeMovementLeftHorizontal,
+        [Inject(Id = "EyeMovementLeftVertical")]
+        IGraph eyeMovementLeftVertical,
 
-    void Start()
+        IDataConversionForGraphModel dataConversionForGraphModel
+    )
+    {
+        _eyeMovementLeftHorizontal = eyeMovementLeftHorizontal;
+        _eyeMovementLeftVertical = eyeMovementLeftVertical;
+        _dataConversionForGraphModel = dataConversionForGraphModel;
+        _eyeMovementLeftHorizontalCanvas = eyeMovementLeftHorizontalCanvas;
+        _eyeMovementLeftVerticalCanvas = eyeMovementLeftVerticalCanvas;
+    }
+
+    void IInitializable.Initialize()
     {
         //model-> view
 
@@ -59,8 +79,7 @@ public class GraphDrawingSpacePresenter : MonoBehaviour
 
             //左眼の垂直運動のグラフ描画
             PreprocessToDrawGraph(IgraphEyeMovementLeftVertical, _dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirYList.ToList(), _eyeMovementLeftVerticalCanvas);
-        })
-        .AddTo(this.gameObject);
+        });
     }
 
     /// <summary>
@@ -70,7 +89,7 @@ public class GraphDrawingSpacePresenter : MonoBehaviour
     /// <param name="coordinateList1">座標</param>
     /// <param name="coordinateList2">座標</param>
     /// <param name="canvas">グラフ描画のゲームオブジェクト</param>
-    void PreprocessToDrawGraph(IGraph graphView, List<float> coordinateList1, List<float> coordinateList2, GameObject canvas)
+    void PreprocessToDrawGraph(IGraph graphView, List<float> coordinateList1, List<float> coordinateList2, RectTransform canvas)
     {
         //グラフViewに、経過時間のリストを追加する。
         graphView.ApplicationTimeList = _dataConversionForGraphModel.ApplicationTimeList.ToList();
@@ -82,6 +101,6 @@ public class GraphDrawingSpacePresenter : MonoBehaviour
         graphView.CreateLineMaterial();
 
         //ゲームオブジェクトをアクティブにする事で、OnRenderObject()が実行され、グラフが描画される。
-        canvas.SetActive(true);
+        canvas.gameObject.SetActive(true);
     }
 }

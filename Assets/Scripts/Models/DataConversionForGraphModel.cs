@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using UniRx;
 using UnityEngine;
 
-public class DataConversionForGraphModel : MonoBehaviour
+public class DataConversionForGraphModel : IDataConversionForGraphModel
 {
     #region Field
     /// <summary>

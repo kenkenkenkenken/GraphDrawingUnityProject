@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 using UniRx;
 using System.Collections.ObjectModel;
 
-public class FileLoadingModel : /*MonoBehaviour,*/ IFileLoadingModel
+public class FileLoadingModel : IFileLoadingModel
 {
     /// <summary>
     /// CSVのデータのリスト
