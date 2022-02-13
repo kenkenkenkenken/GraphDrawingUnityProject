@@ -466,7 +466,6 @@ GameObject:
   - component: {fileID: 898493934}
   - component: {fileID: 898493935}
   - component: {fileID: 898493933}
-  - component: {fileID: 898493936}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -491,7 +490,6 @@ MonoBehaviour:
   - {fileID: 898493934}
   - {fileID: 898493935}
   - {fileID: 898493933}
-  - {fileID: 898493936}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -547,6 +545,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18daf401cc620ac46b401e976dfff4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _eyeMovementLeftHorizontalDrawingSpace: {fileID: 6010770515203133158}
+  _eyeMovementLeftVerticalDrawingSpace: {fileID: 6670824478621072866}
+  _eyeMovementLeftHorizontalCanvas: {fileID: 6010770513650976995}
+  _eyeMovementLeftVerticalCanvas: {fileID: 6670824479052288809}
 --- !u!114 &898493935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -557,18 +559,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de358d80570d4b14e88c864f64fb9f35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &898493936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 898493930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4373aeab718bb0147af60802f7e144d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &963194225
@@ -872,7 +862,6 @@ GameObject:
   - component: {fileID: 6010770513650977007}
   - component: {fileID: 6010770513650976992}
   - component: {fileID: 6010770513650976993}
-  - component: {fileID: 6010770513650976996}
   m_Layer: 5
   m_Name: EyeMovementLeftHorizontalCanvas
   m_TagString: Untagged
@@ -880,24 +869,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &6010770513650976996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6010770513650976995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _components:
-  - {fileID: 6010770513650976994}
-  _identifier: EyeMovementLeftHorizontalCanvas
-  _useSceneContext: 0
-  _context: {fileID: 0}
-  _bindType: 2
 --- !u!223 &6010770513650977007
 Canvas:
   m_ObjectHideFlags: 0
@@ -1074,20 +1045,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6010770514609988923}
   m_CullTransparentMesh: 1
---- !u!114 &6010770515203133156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6010770515203133158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cf05bc572585ea43b76931347a1a950, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _applicationTimeList: []
-  _angleList: []
 --- !u!4 &6010770515203133157
 Transform:
   m_ObjectHideFlags: 0
@@ -1111,8 +1068,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6010770515203133157}
-  - component: {fileID: 6010770515203133156}
-  - component: {fileID: 6010770515203133159}
   m_Layer: 0
   m_Name: DrawingSpace
   m_TagString: Untagged
@@ -1120,38 +1075,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &6010770515203133159
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6010770515203133158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _components:
-  - {fileID: 6010770515203133156}
-  _identifier: EyeMovementLeftHorizontal
-  _useSceneContext: 0
-  _context: {fileID: 0}
-  _bindType: 2
---- !u!114 &6670824478621072864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6670824478621072866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cf05bc572585ea43b76931347a1a950, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _applicationTimeList: []
-  _angleList: []
 --- !u!4 &6670824478621072865
 Transform:
   m_ObjectHideFlags: 0
@@ -1175,8 +1098,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6670824478621072865}
-  - component: {fileID: 6670824478621072864}
-  - component: {fileID: 6670824478621072867}
   m_Layer: 0
   m_Name: DrawingSpace
   m_TagString: Untagged
@@ -1184,24 +1105,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &6670824478621072867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6670824478621072866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _components:
-  - {fileID: 6670824478621072864}
-  _identifier: EyeMovementLeftVertical
-  _useSceneContext: 0
-  _context: {fileID: 0}
-  _bindType: 2
 --- !u!222 &6670824479017800568
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1375,7 +1278,6 @@ GameObject:
   - component: {fileID: 6670824479052288805}
   - component: {fileID: 6670824479052288806}
   - component: {fileID: 6670824479052288807}
-  - component: {fileID: 6670824479052288810}
   m_Layer: 5
   m_Name: EyeMovementLeftVerticalCanvas
   m_TagString: Untagged
@@ -1383,24 +1285,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &6670824479052288810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6670824479052288809}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _components:
-  - {fileID: 6670824479052288808}
-  _identifier: EyeMovementLeftVerticalCanvas
-  _useSceneContext: 0
-  _context: {fileID: 0}
-  _bindType: 2
 --- !u!222 &6670824479266507178
 CanvasRenderer:
   m_ObjectHideFlags: 0

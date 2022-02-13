@@ -7,6 +7,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using static GraphDrawingSpaceViewType;
 
 public class GraphDrawingSpacePresenter : IInitializable
 {
@@ -52,9 +53,9 @@ public class GraphDrawingSpacePresenter : IInitializable
         [Inject(Id = "EyeMovementLeftVerticalCanvas")]
         RectTransform eyeMovementLeftVerticalCanvas,
 
-        [Inject(Id = "EyeMovementLeftHorizontal")]
+        [Inject(Id = EyeMovementLeftHorizontal)]
         IGraph eyeMovementLeftHorizontal,
-        [Inject(Id = "EyeMovementLeftVertical")]
+        [Inject(Id = EyeMovementLeftVertical)]
         IGraph eyeMovementLeftVertical,
 
         IDataConversionForGraphModel dataConversionForGraphModel
