@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using UnityEngine;
+using UniRx;
 
 public class FileLoadingModel : IFileLoadingModel
 {
@@ -11,11 +11,11 @@ public class FileLoadingModel : IFileLoadingModel
     /// CSVのデータのリスト
     /// </summary>
     private List<string[]> _csvDataList = new List<string[]>();
-
     /// <summary>
     /// CSVのデータのリストのプロパティ
     /// </summary>
-    public ReadOnlyCollection<string[]> CsvDataList => new ReadOnlyCollection<string[]>(_csvDataList);
+    public ReadOnlyCollection<string[]> CsvDataList => _csvDataList.AsReadOnly();
+
 
     /// <summary>
     /// CSVファイルを読んでリストに追加する
@@ -34,7 +34,7 @@ public class FileLoadingModel : IFileLoadingModel
             string line;
             while ((line = await reader.ReadLineAsync()) != null )
             {
-                _csvDataList.Add(line.Split(',')); 
+                _csvDataList.Add(line.Split(','));
             }
         }
     }

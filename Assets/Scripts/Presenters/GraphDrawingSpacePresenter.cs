@@ -1,16 +1,14 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
-using Unity.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 using static GraphDrawingSpaceViewType;
+using static RectTransformType;
 
 public class GraphDrawingSpacePresenter : IInitializable
 {
+    #region Field
     /// <summary>
     /// 左眼の水平運動のグラフ描画のView
     /// </summary>
@@ -43,14 +41,15 @@ public class GraphDrawingSpacePresenter : IInitializable
         get { return _eyeMovementLeftVertical; }
     }
 
-    [SerializeField] private IDataConversionForGraphModel _dataConversionForGraphModel;
-    [SerializeField] private RectTransform _eyeMovementLeftHorizontalCanvas;
-    [SerializeField] private RectTransform _eyeMovementLeftVerticalCanvas;
+    private IDataConversionForGraphModel _dataConversionForGraphModel;
+    private RectTransform _eyeMovementLeftHorizontalCanvas;
+    private RectTransform _eyeMovementLeftVerticalCanvas;
+    #endregion
 
     public GraphDrawingSpacePresenter(
-        [Inject(Id = "EyeMovementLeftHorizontalCanvas")]
+        [Inject(Id = EyeMovementLeftHorizontalCanvas)]
         RectTransform eyeMovementLeftHorizontalCanvas,
-        [Inject(Id = "EyeMovementLeftVerticalCanvas")]
+        [Inject(Id = EyeMovementLeftVerticalCanvas)]
         RectTransform eyeMovementLeftVerticalCanvas,
 
         [Inject(Id = EyeMovementLeftHorizontal)]
@@ -72,8 +71,8 @@ public class GraphDrawingSpacePresenter : IInitializable
     {
         //model-> view
 
-        //SetCsvDataForEachColumn終了時に実行する
-        _dataConversionForGraphModel.OnSetCsvDataForEachColumn.Subscribe(_ =>
+        //SetDataForCsvColumn終了時に実行する
+        _dataConversionForGraphModel.OnSetDataForCsvColumn.Subscribe(_ =>
         {
             //左眼の水平運動のグラフ描画
             PreprocessToDrawGraph(IgraphEyeMovementLeftHorizontal, _dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirXList.ToList(), _eyeMovementLeftHorizontalCanvas);
@@ -98,10 +97,10 @@ public class GraphDrawingSpacePresenter : IInitializable
         //グラフViewに、角度のリストを追加する        //座標のリストを2つ渡して、角度のリストを取得する
         graphView.AngleList = _dataConversionForGraphModel.GetAngleList(coordinateList1, coordinateList2);
 
-        ////グラフViewの、GL描画用マテリアルを設定する
-        graphView.CreateLineMaterial();
-
         //ゲームオブジェクトをアクティブにする事で、OnRenderObject()が実行され、グラフが描画される。
         canvas.gameObject.SetActive(true);
+
+        //GL描画用マテリアルを設定する
+        graphView.CreateLineMaterial();
     }
 }

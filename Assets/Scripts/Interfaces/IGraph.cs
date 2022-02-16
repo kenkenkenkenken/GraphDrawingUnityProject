@@ -22,6 +22,36 @@ public interface IGraph
     public List<float> AngleList { get; set; }
 
     /// <summary>
+    /// 水平目盛りの最小値のプロパティ
+    /// </summary>
+    public float MinScaleLineX { get; }
+    /// <summary>
+    /// 水平目盛りの最大値
+    /// </summary>
+    public float MaxScaleLineX { get; }
+    /// <summary>
+    /// 1水平目盛りあたりの秒数のプロパティ
+    /// </summary>
+    public float SecondPerScaleLineX { get; }
+    /// <summary>
+    /// 秒数の最大値のプロパティ
+    /// </summary>
+    public float MaxSecondX { get; }
+
+    /// <summary>
+    /// 垂直目盛りの最小値のプロパティ
+    /// </summary>
+    public float MinScaleLineY { get; }
+    /// <summary>
+    /// 垂直目盛りの最大値のプロパティ
+    /// </summary>
+    public float MaxScaleLineY { get; }
+    /// <summary>
+    /// 1垂直目盛りあたりの角度のプロパティ
+    /// </summary>
+    public float AnglePerScaleLineY { get; }
+
+    /// <summary>
     /// グラフ描画クラスのインターフェイス
     /// </summary>
     public IGraph IGraph { get; set; }

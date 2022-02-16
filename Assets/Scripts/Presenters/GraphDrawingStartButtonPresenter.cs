@@ -1,15 +1,12 @@
-using Cysharp.Threading.Tasks;
-using System;
 using System.Linq;
 using UniRx;
-using UnityEngine;
 using Zenject;
 
 public class GraphDrawingStartButtonPresenter: IInitializable
 {
-    [SerializeField] private GraphDrawingStartButtonView _graphDrawingStartButtonView;
-    [SerializeField] private IFileLoadingModel _fileLoadingModel;
-    [SerializeField] private IDataConversionForGraphModel _dataConversionForGraphModel;
+    private GraphDrawingStartButtonView _graphDrawingStartButtonView;
+    private IFileLoadingModel _fileLoadingModel;
+    private IDataConversionForGraphModel _dataConversionForGraphModel;
 
     public GraphDrawingStartButtonPresenter(
         GraphDrawingStartButtonView graphDrawingStartButtonView,

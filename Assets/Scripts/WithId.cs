@@ -1,5 +1,0 @@
-enum GraphDrawingSpaceViewType
-{
-    EyeMovementLeftHorizontal,
-    EyeMovementLeftVertical,
-}

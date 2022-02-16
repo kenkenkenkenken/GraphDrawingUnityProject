@@ -359,7 +359,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd39f17d38dc394ab6e6cd7580e205a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _drawingStartButton: {fileID: 608449397}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -545,6 +544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18daf401cc620ac46b401e976dfff4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _graphDrawingStartButton: {fileID: 608449395}
   _eyeMovementLeftHorizontalDrawingSpace: {fileID: 6010770515203133158}
   _eyeMovementLeftVerticalDrawingSpace: {fileID: 6670824478621072866}
   _eyeMovementLeftHorizontalCanvas: {fileID: 6010770513650976995}
