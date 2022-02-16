@@ -2,70 +2,57 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UniRx;
-using UnityEngine;
+using static CsvDataListIndex;
 
-public class DataConversionForGraphModel : MonoBehaviour
+public class DataConversionForGraphModel : IDataConversionForGraphModel
 {
-    /// <summary>
-    /// CSVのデータ名と対応する列数目
-    /// </summary>
-    private enum CsvDataListIndex
-    {
-        ApplicationTime = 1, //経過時間
-        EyeRayLeftDirX = 24, //左眼の視線方向 x
-        EyeRayLeftDirY = 25, //左眼の視線方向 y
-        EyeRayLeftDirZ = 26, //左眼の視線方向 z
-    }
-
+    #region Field
     /// <summary>
     /// 経過時間のリスト
     /// </summary>
-    [SerializeField] private List<float> _applicationTimeList = new List<float>();
-
+    private List<float> _applicationTimeList = new List<float>();
     /// <summary>
     /// 経過時間のリストのプロパティ
     /// </summary>
-    public ReadOnlyCollection<float> ApplicationTimeList => new ReadOnlyCollection<float>(_applicationTimeList);
+    public ReadOnlyCollection<float> ApplicationTimeList => _applicationTimeList.AsReadOnly();
 
     /// <summary>
     /// 左眼の視線方向xのリスト
     /// </summary>
-    [SerializeField]  private List<float> _eyeRayLeftDirXList = new List<float>();
-
+    private List<float> _eyeRayLeftDirXList = new List<float>();
     /// <summary>
     /// 左眼の視線方向xのリストのプロパティ
     /// </summary>
-    public ReadOnlyCollection<float> EyeRayLeftDirXList => new ReadOnlyCollection<float>(_eyeRayLeftDirXList);
+    public ReadOnlyCollection<float> EyeRayLeftDirXList => _eyeRayLeftDirXList.AsReadOnly();
 
     /// <summary>
     /// 左眼の視線方向yのリスト
     /// </summary>
-    [SerializeField]  private List<float> _eyeRayLeftDirYList = new List<float>();
-
+    private List<float> _eyeRayLeftDirYList = new List<float>();
     /// <summary>
     /// 左眼の視線方向yのリストのプロパティ
     /// </summary>
-    public ReadOnlyCollection<float> EyeRayLeftDirYList => new ReadOnlyCollection<float>(_eyeRayLeftDirYList);
+    public ReadOnlyCollection<float> EyeRayLeftDirYList => _eyeRayLeftDirYList.AsReadOnly();
 
     /// <summary>
     /// 左眼の視線方向zのリスト
     /// </summary>
-    [SerializeField]  private List<float> _eyeRayLeftDirZList = new List<float>();
-
+    private List<float> _eyeRayLeftDirZList = new List<float>();
     /// <summary>
     /// 左眼の視線方向zのリストのプロパティ
     /// </summary>
-    public ReadOnlyCollection<float> EyeRayLeftDirZList => new ReadOnlyCollection<float>(_eyeRayLeftDirZList);
+    public ReadOnlyCollection<float> EyeRayLeftDirZList => _eyeRayLeftDirZList.AsReadOnly();
 
     /// <summary>
-    /// SetCsvDataForEachColumn終了時に発火するストリーム
+    /// SetDataForCsvColumn終了時に発火するストリーム
     /// </summary>
-    [SerializeField]  private Subject<Unit> _onSetCsvDataForEachColumn = new Subject<Unit>();
-
+    private Subject<Unit> _onSetDataForCsvColumn = new Subject<Unit>();
     /// <summary>
-    /// SetCsvDataForEachColumn終了時に発火するストリームのプロパティ
+    /// SetDataForCsvColumn終了時に発火するストリームのプロパティ
     /// </summary>
-    public IObservable<Unit> OnSetCsvDataForEachColumn => _onSetCsvDataForEachColumn;
+    public IObservable<Unit> OnSetDataForCsvColumn => _onSetDataForCsvColumn;
+    #endregion
+
 
     /// <summary>
     /// CSVの列のデータを追加する
@@ -81,12 +68,12 @@ public class DataConversionForGraphModel : MonoBehaviour
 
         for (int i = 1; i < csvDataList.Count; i++)
         {
-            _applicationTimeList.Add(float.Parse(csvDataList[i][(int)CsvDataListIndex.ApplicationTime]));
-            _eyeRayLeftDirXList.Add(float.Parse(csvDataList[i][(int)CsvDataListIndex.EyeRayLeftDirX]));
-            _eyeRayLeftDirYList.Add(float.Parse(csvDataList[i][(int)CsvDataListIndex.EyeRayLeftDirY]));
-            _eyeRayLeftDirZList.Add(float.Parse(csvDataList[i][(int)CsvDataListIndex.EyeRayLeftDirZ]));
+            _applicationTimeList.Add(float.Parse(csvDataList[i][(int)ApplicationTime]));
+            _eyeRayLeftDirXList.Add(float.Parse(csvDataList[i][(int)EyeRayLeftDirX]));
+            _eyeRayLeftDirYList.Add(float.Parse(csvDataList[i][(int)EyeRayLeftDirY]));
+            _eyeRayLeftDirZList.Add(float.Parse(csvDataList[i][(int)EyeRayLeftDirZ]));
         }
-        _onSetCsvDataForEachColumn.OnNext(Unit.Default);
+        _onSetDataForCsvColumn.OnNext(Unit.Default);
     }
 
     /// <summary>

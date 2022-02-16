@@ -2,10 +2,17 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
+using Zenject;
 
-public class GraphDrawingStartButtonView : MonoBehaviour
+public class GraphDrawingStartButtonView: MonoBehaviour
 {
-    [SerializeField] private Button _drawingStartButton;
+    private Button _drawingStartButton;
+
+    [Inject]
+    void Construct(Button drawingStartButton)
+    {
+        _drawingStartButton = drawingStartButton;
+    }
 
     /// <summary>
     /// DrawingStartButton‚ğ‰Ÿ‚µ‚½‚É”­‰Î‚·‚éƒXƒgƒŠ[ƒ€

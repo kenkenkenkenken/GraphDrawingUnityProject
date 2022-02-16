@@ -1,99 +1,127 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using UniRx;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class GraphDrawingSpaceView : MonoBehaviour
+public class GraphDrawingSpaceView : MonoBehaviour, IGraph
 {
     /// <summary>
-    /// GL描画用マテリアル
+    /// GL描画用マテリアルのプロパティ
     /// </summary>
-    [SerializeField] private Material _lineMaterial;
+    Material IGraph.LineMaterial { get; set; }
 
     /// <summary>
     /// 経過時間のリスト
     /// </summary>
     [SerializeField] private List<float> _applicationTimeList = new List<float>();
-
     /// <summary>
     /// 経過時間のリストのプロパティ
     /// </summary>
-    public List<float> ApplicationTimeList
-    {
-        get { return _applicationTimeList; }
-        set { _applicationTimeList = value; }
-    }
+    List<float> IGraph.ApplicationTimeList { get; set; }
 
     /// <summary>
     /// 角度のリスト
     /// </summary>
     [SerializeField] private List<float> _angleList = new List<float>();
-
     /// <summary>
     /// 角度のリストのプロパティ
     /// </summary>
-    public List<float> AngleList
+    List<float> IGraph.AngleList { get; set; }
+
+    /// <summary>
+    /// 水平目盛りの最小値のプロパティ
+    /// </summary>
+    float IGraph.MinScaleLineX => 0;
+    /// <summary>
+    /// 水平目盛りの最大値
+    /// </summary>
+    float IGraph.MaxScaleLineX => 20;
+    /// <summary>
+    /// 1水平目盛りあたりの秒数のプロパティ
+    /// </summary>
+    float IGraph.SecondPerScaleLineX => 1;
+    /// <summary>
+    /// 秒数の最大値のプロパティ
+    /// </summary>
+    float IGraph.MaxSecondX => IGraph.MaxScaleLineX * IGraph.SecondPerScaleLineX;
+
+    /// <summary>
+    /// 垂直目盛りの最小値のプロパティ
+    /// </summary>
+    float IGraph.MinScaleLineY => -2;
+    /// <summary>
+    /// 垂直目盛りの最大値のプロパティ
+    /// </summary>
+    float IGraph.MaxScaleLineY => 2;
+    /// <summary>
+    /// 1垂直目盛りあたりの角度のプロパティ
+    /// </summary>
+    float IGraph.AnglePerScaleLineY => 20;
+
+    /// <summary>
+    /// グラフ描画クラスのインターフェイスのプロパティ
+    /// </summary>
+    public IGraph IGraph { get; set; }
+
+
+    public void Awake()
     {
-        get { return _angleList; }
-        set { _angleList = value; }
+        //明示的に実装したインターフェイスメソッドを、クラス内から呼び出す事ができないので、呼び出せるように変数に代入する
+        IGraph = this;
     }
 
-    private void Start()
+    /// <summary>
+    /// カメラがシーンをレンダリングされた後に呼び出される
+    /// </summary>
+    /// <remarks>
+    /// Unityイベントメソッドなので、インターフェイスメソッドの明示的実装ができないのでpublicのままにしている
+    /// </remarks>
+    /// 
+    public void OnRenderObject()
     {
-        CreateLineMaterial();
-    }
-
-    private void OnRenderObject()
-    {
-        DrawBackground();
-        DrawHorizontalScaleLine();
-        DrawHorizontalScaleCenterLine();
-        DrawVerticalScaleLine();
-        DrawVerticalScaleCenterLine();
-        DrawSeries(_applicationTimeList, _angleList);
-        DrawFrameBorder();
+        if (IGraph is null) return;
+        IGraph.DrawBackground();
+        IGraph.DrawHorizontalScaleLine();
+        IGraph.DrawHorizontalScaleCenterLine();
+        IGraph.DrawVerticalScaleLine();
+        IGraph.DrawVerticalScaleCenterLine();
+        IGraph.DrawSeries(IGraph.ApplicationTimeList, IGraph.AngleList);
+        IGraph.DrawFrameBorder();
     }
 
     /// <summary>
     /// // GL描画用マテリアルを設定する
     /// </summary>
-    private void CreateLineMaterial()
+    void IGraph.CreateLineMaterial()
     {
-        if (!_lineMaterial)
-        {
-            Shader shader = Shader.Find("Hidden/Internal-Colored");
-            _lineMaterial = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
-            _lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            _lineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            _lineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-            _lineMaterial.SetInt("_ZWrite", 0);
-        }
+        if (!(IGraph.LineMaterial is null)) return;
+        Shader shader = Shader.Find("Hidden/Internal-Colored");
+        IGraph.LineMaterial = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+        IGraph.LineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        IGraph.LineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        IGraph.LineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+        IGraph.LineMaterial.SetInt("_ZWrite", 0);
     }
 
     /// <summary>
     /// 背景を描く
     /// </summary>
-    private void DrawBackground()
+    void IGraph.DrawBackground()
     {
+        GL.Flush();
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", Color.grey);
-            _lineMaterial.SetPass(0);
+            IGraph.LineMaterial.SetColor("_Color", Color.grey);
+            IGraph.LineMaterial.SetPass(0);
 
             GL.Begin(GL.QUADS);
             {
-                float lineWidth = 2;
-                float verticalCenterPosition = 0;
-                float graphWidth = 20;
-
-                FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
-                FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
+                //左上
+                IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, IGraph.MaxScaleLineY, 0);
+                //右上
+                IGraph.FollowAndDrawGraph(IGraph.MaxScaleLineX, IGraph.MaxScaleLineY, 0);
+                //右下
+                IGraph.FollowAndDrawGraph(IGraph.MaxScaleLineX, IGraph.MinScaleLineY, 0);
+                //左下
+                IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, IGraph.MinScaleLineY, 0);
             }
             GL.End();
         }
@@ -105,22 +133,23 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// </summary>
     /// <param name="applicationTimeList">経過時間のリスト</param>
     /// <param name="angleList">角度のリスト</param>
-    private void DrawSeries(List<float> applicationTimeList, List<float> angleList)
+    void IGraph.DrawSeries(List<float> applicationTimeList, List<float> angleList)
     {
+        GL.Flush();
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", Color.cyan);
-            _lineMaterial.SetPass(0);
+            IGraph.LineMaterial.SetColor("_Color", Color.cyan);
+            IGraph.LineMaterial.SetPass(0);
 
             GL.Begin(GL.LINE_STRIP);
             {
                 for (int i = 0; i < applicationTimeList.Count; i++)
                 {
-                                    //最初の時間を目盛りの0に合わせる                 //垂直の描画位置を20分の1にする
-                    FollowAndDrawGraph(applicationTimeList[i] - applicationTimeList[0], angleList[i] / 20, 0);
+                    //最初の時間を目盛りの0に合わせる                                          //垂直の描画位置を20分の1にする
+                    IGraph.FollowAndDrawGraph(applicationTimeList[i] - applicationTimeList[0], angleList[i] / IGraph.AnglePerScaleLineY, 0);
 
                     //グラフの目盛りの20秒を超えたらループを抜ける
-                    if (applicationTimeList[i] >= applicationTimeList[0] + 20)
+                    if (applicationTimeList[i] >= applicationTimeList[0] + IGraph.MaxSecondX)
                     {
                         break;
                     }
@@ -132,22 +161,22 @@ public class GraphDrawingSpaceView : MonoBehaviour
     }
 
     /// <summary>
-    /// 横目盛りを描く 
+    /// 水平の目盛りを描く 
     /// </summary>
-    private void DrawHorizontalScaleLine()
+    void IGraph.DrawHorizontalScaleLine()
     {
+        GL.Flush();
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", Color.white);
-            _lineMaterial.SetPass(0);
+            IGraph.LineMaterial.SetColor("_Color", Color.white);
+            IGraph.LineMaterial.SetPass(0);
 
             GL.Begin(GL.LINES);
             {
-                float graphWidth = 20;
-                for (var i = -1; i < 2; i++)
+                for (var i = (IGraph.MinScaleLineY + 1); i < IGraph.MaxScaleLineY; i++)
                 {
-                    FollowAndDrawGraph(0, i, 0);
-                    FollowAndDrawGraph(graphWidth, i, 0);
+                    IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, i, 0);
+                    IGraph.FollowAndDrawGraph(IGraph.MaxScaleLineX, i, 0);
                 }
             }
             GL.End();
@@ -156,21 +185,22 @@ public class GraphDrawingSpaceView : MonoBehaviour
     }
 
     /// <summary>
-    /// 縦目盛りを描く 
+    /// 垂直の目盛りを描く 
     /// </summary>
-    private void DrawVerticalScaleLine()
+    void IGraph.DrawVerticalScaleLine()
     {
+        GL.Flush();
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", Color.white);
-            _lineMaterial.SetPass(0);
+            IGraph.LineMaterial.SetColor("_Color", Color.white);
+            IGraph.LineMaterial.SetPass(0);
 
             GL.Begin(GL.LINES);
             {
-                for (var i = 1; i < 20; i++)
+                for (var i = IGraph.MinScaleLineX + 1; i < IGraph.MaxScaleLineX; i++)
                 {
-                    FollowAndDrawGraph(i, 2, 0);
-                    FollowAndDrawGraph(i, -2, 0);
+                    IGraph.FollowAndDrawGraph(i, IGraph.MaxScaleLineY, 0);
+                    IGraph.FollowAndDrawGraph(i, IGraph.MinScaleLineY, 0);
                 }
 
             }
@@ -180,24 +210,29 @@ public class GraphDrawingSpaceView : MonoBehaviour
     }
 
     /// <summary>
-    /// 水平の目盛りの中央の線を太く描く
+    /// 垂直の目盛りの中央の線を太く描く
     /// </summary>
-    private void DrawVerticalScaleCenterLine()
+    void IGraph.DrawVerticalScaleCenterLine()
     {
+        GL.Flush();
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", Color.red);
-            _lineMaterial.SetPass(0);
+            IGraph.LineMaterial.SetColor("_Color", Color.red);
+            IGraph.LineMaterial.SetPass(0);
 
-            // データグラフの描画
+            // データグラフの描画 
             GL.Begin(GL.QUADS);
             {
                 float lineWidth = 0.015f;
-                float verticalCenterPosition = 10;
-                FollowAndDrawGraph(verticalCenterPosition - lineWidth, 2, 0);
-                FollowAndDrawGraph(verticalCenterPosition + lineWidth, 2, 0);
-                FollowAndDrawGraph(verticalCenterPosition + lineWidth, -2, 0);
-                FollowAndDrawGraph(verticalCenterPosition - lineWidth, -2, 0);
+                float verticalCenterPosition = IGraph.MinScaleLineX + (IGraph.MaxScaleLineX - IGraph.MinScaleLineX) / 2;
+                //左上
+                IGraph.FollowAndDrawGraph(verticalCenterPosition - lineWidth, IGraph.MaxScaleLineY, 0);
+                //右上
+                IGraph.FollowAndDrawGraph(verticalCenterPosition + lineWidth, IGraph.MaxScaleLineY, 0);
+                //右下
+                IGraph.FollowAndDrawGraph(verticalCenterPosition + lineWidth, IGraph.MinScaleLineY, 0);
+                //左下
+                IGraph.FollowAndDrawGraph(verticalCenterPosition - lineWidth, IGraph.MinScaleLineY, 0);
             }
             GL.End();
         }
@@ -207,22 +242,26 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// 水平の目盛りの中央の線を太く描く
     /// </summary>
-    private void DrawHorizontalScaleCenterLine()
+    void IGraph.DrawHorizontalScaleCenterLine()
     {
+        GL.Flush();
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", Color.white);
-            _lineMaterial.SetPass(0);
+            IGraph.LineMaterial.SetColor("_Color", Color.white);
+            IGraph.LineMaterial.SetPass(0);
 
             GL.Begin(GL.QUADS);
             {
                 float lineWidth = 0.02f;
-                float verticalCenterPosition = 0;
-                float graphWidth = 20;
-                FollowAndDrawGraph(0, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(graphWidth, verticalCenterPosition + lineWidth, 0);
-                FollowAndDrawGraph(graphWidth, verticalCenterPosition - lineWidth, 0);
-                FollowAndDrawGraph(0, verticalCenterPosition - lineWidth, 0);
+                float horizontalCenterPosition = IGraph.MinScaleLineY + (IGraph.MaxScaleLineY - IGraph.MinScaleLineY) / 2;
+                //左上
+                IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, horizontalCenterPosition + lineWidth, 0);
+                //右上
+                IGraph.FollowAndDrawGraph(IGraph.MaxScaleLineX, horizontalCenterPosition + lineWidth, 0);
+                //右下
+                IGraph.FollowAndDrawGraph(IGraph.MaxScaleLineX, horizontalCenterPosition - lineWidth, 0);
+                //左下
+                IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, horizontalCenterPosition - lineWidth, 0);
             }
             GL.End();
         }
@@ -232,26 +271,25 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <summary>
     /// 枠線を描く
     /// </summary>
-    private void DrawFrameBorder()
+    void IGraph.DrawFrameBorder()
     {
+        GL.Flush();
         GL.PushMatrix();
         {
-            _lineMaterial.SetColor("_Color", Color.green);
-            _lineMaterial.SetPass(0);
+            IGraph.LineMaterial.SetColor("_Color", Color.green);
+            IGraph.LineMaterial.SetPass(0);
 
             GL.Begin(GL.LINES);
             {
-                //縦線
-                FollowAndDrawGraph(0, -2, 0);
-                FollowAndDrawGraph(0, 2, 0);
+                //垂直線
+                IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, IGraph.MinScaleLineY, 0);
+                IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, IGraph.MaxScaleLineY, 0);
 
-                float graphWidth = 20;
-
-                //横線
-                for (var i = -2; i <= 2; i += 4)
+                //水平線
+                for (var i = IGraph.MinScaleLineY; i <= 2; i += (IGraph.MaxScaleLineY - IGraph.MinScaleLineY))
                 {
-                    FollowAndDrawGraph(0, i, 0);
-                    FollowAndDrawGraph(graphWidth, i, 0);
+                    IGraph.FollowAndDrawGraph(IGraph.MinScaleLineX, i, 0);
+                    IGraph.FollowAndDrawGraph(IGraph.MaxScaleLineX, i, 0);
                 }
             }
             GL.End();
@@ -265,7 +303,7 @@ public class GraphDrawingSpaceView : MonoBehaviour
     /// <param name="x">追従前の描画位置のx座標</param>
     /// <param name="y">追従前の描画位置のy座標</param>
     /// <param name="z">追従前の描画位置のz座標</param>
-    private void FollowAndDrawGraph(float x, float y, float z)
+    void IGraph.FollowAndDrawGraph(float x, float y, float z)
     {
         GL.Vertex3
         (

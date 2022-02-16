@@ -1,9 +1,7 @@
 using System;
-using System.Globalization;
 
 public static class AngleUtility
 {
-
     // （参考）https://jprogramer.com/catealgo/1033
     public static float GetAngle(float x, float y) {
         //座標の読み込み
