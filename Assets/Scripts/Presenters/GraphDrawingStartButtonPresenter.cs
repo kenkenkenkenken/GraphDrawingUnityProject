@@ -1,9 +1,12 @@
+using System;
 using System.Linq;
 using UniRx;
 using Zenject;
 
-public class GraphDrawingStartButtonPresenter: IInitializable
+public class GraphDrawingStartButtonPresenter: IInitializable, IDisposable
 {
+    CompositeDisposable _compositeDisposable = new CompositeDisposable();
+
     private GraphDrawingStartButtonView _graphDrawingStartButtonView;
     private IFileLoadingModel _fileLoadingModel;
     private IDataConversionForGraphModel _dataConversionForGraphModel;
@@ -31,6 +34,12 @@ public class GraphDrawingStartButtonPresenter: IInitializable
 
             //CSVの各列を各リストに追加する。
             _dataConversionForGraphModel.SetDataForCsvColumn(_fileLoadingModel.CsvDataList.ToList());
-        });
+        })
+        .AddTo(_compositeDisposable);
+    }
+
+    public void Dispose()
+    {
+        _compositeDisposable.Dispose();
     }
 }

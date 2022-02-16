@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
@@ -6,9 +7,11 @@ using Zenject;
 using static GraphDrawingSpaceViewType;
 using static RectTransformType;
 
-public class GraphDrawingSpacePresenter : IInitializable
+public class GraphDrawingSpacePresenter : IInitializable, IDisposable
 {
     #region Field
+    private CompositeDisposable _compositeDisposable = new CompositeDisposable();
+
     /// <summary>
     /// 左眼の水平運動のグラフ描画のView
     /// </summary>
@@ -79,7 +82,8 @@ public class GraphDrawingSpacePresenter : IInitializable
 
             //左眼の垂直運動のグラフ描画
             PreprocessToDrawGraph(IgraphEyeMovementLeftVertical, _dataConversionForGraphModel.EyeRayLeftDirZList.ToList(), _dataConversionForGraphModel.EyeRayLeftDirYList.ToList(), _eyeMovementLeftVerticalCanvas);
-        });
+        })
+        .AddTo(_compositeDisposable);
     }
 
     /// <summary>
@@ -102,5 +106,10 @@ public class GraphDrawingSpacePresenter : IInitializable
 
         //GL描画用マテリアルを設定する
         graphView.CreateLineMaterial();
+    }
+
+    public void Dispose()
+    {
+        _compositeDisposable.Dispose();
     }
 }
