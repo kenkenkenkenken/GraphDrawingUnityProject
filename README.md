@@ -17,3 +17,13 @@
 ●依存性の注入にExtenjectを利用。  
 ●ファイル読込は、UniTaskを利用。  
 ●ボタンクリック処理には、UniRxを利用。
+
+# Copyright
+UniRx Copyright (c) 2018 Yoshifumi Kawai  
+https://github.com/neuecc/UniRx/blob/master/LICENSE
+
+UniTask Copyright (c) 2019 Yoshifumi Kawai / Cysharp, Inc.  
+https://github.com/Cysharp/UniTask/blob/master/LICENSE
+
+Extenject Copyright (c) 2016 Modest Tree Media Inc  
+https://github.com/svermeulen/Extenject/blob/master/License.md
